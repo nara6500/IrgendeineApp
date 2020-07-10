@@ -17,7 +17,7 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/imageView2"
+                android:id="@+id/myAvatar_image"
                 android:layout_width="72dp"
                 android:layout_height="match_parent"
                 app:srcCompat="@drawable/circle" />
@@ -42,21 +42,21 @@
             android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/imageButton5"
+                android:id="@+id/chats_button"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 app:srcCompat="@android:drawable/sym_action_chat" />
 
             <ImageButton
-                android:id="@+id/imageButton6"
+                android:id="@+id/contacts_button"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 app:srcCompat="@android:drawable/ic_menu_my_calendar" />
 
             <ImageButton
-                android:id="@+id/imageButton7"
+                android:id="@+id/notes_button"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
