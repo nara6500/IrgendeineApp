@@ -17,8 +17,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".MessagesActivity">
-
         </activity>
+        <activity android:name=".MessageButtonActivity">
+        </activity>
+
     </application>
 
 </manifest>
