@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "386939673682",
+    "firebase_url": "https://irgendeineapp.firebaseio.com",
+    "project_id": "irgendeineapp",
+    "storage_bucket": "irgendeineapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:386939673682:android:f72bc628c4abc7b3ae138b",
+        "android_client_info": {
+          "package_name": "com.example.irgendeineapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "386939673682-55k0vb2qhdqijjpngc4vnm6tpsluptfi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvqR5UIyr_xWNDMpXw5IP9Ptc0jloOpF4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "386939673682-55k0vb2qhdqijjpngc4vnm6tpsluptfi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
