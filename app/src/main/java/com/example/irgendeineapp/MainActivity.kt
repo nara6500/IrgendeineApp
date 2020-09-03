@@ -1,6 +1,7 @@
 package com.example.irgendeineapp
 
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -50,6 +51,12 @@ class  MainActivity : AppCompatActivity() {
 
                 }
 
+                adapter.setOnItemClickListener { item, view ->
+                    val intent =Intent(view.context, MessagesActivity::class.java )
+                    startActivity(intent)
+
+                }
+
                 chat_List.adapter = adapter
             }
 
@@ -74,7 +81,7 @@ class UserItem2: Item<ViewHolder>(){
 class UserItem(val user:User): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
         // will be called in our list for each user objject later on...
-        viewHolder.itemView.message_Button.text = user.user_name
+        viewHolder.itemView.user_name.text = user.user_name
 
        // Picasso.get().load(user.profileImageUrl).into(viewHolder.itemView.message_Button_image)
     }
