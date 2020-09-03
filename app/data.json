@@ -1,0 +1,20 @@
+{
+  "user": [
+    {
+      "user_id": 0,
+      "user_name": "ich"
+    },
+    {
+      "user_id": 1,
+      "user_name": "Alex"
+    },
+    {
+      "user_id": 2,
+      "user_name": "Anna"
+    },
+    {
+      "user_id": 2,
+      "user_name": "Timo"
+    }
+  ]
+}

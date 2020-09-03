@@ -63,7 +63,7 @@ class  MainActivity : AppCompatActivity() {
 class UserItem(val user:User): Item<GroupieViewHolder>(){
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         // will be called in our list for each user objject later on...
-        viewHolder.itemView.message_Button.textView.text = user.username
+        viewHolder.itemView.message_Button.textView.text = user.user_name
 
         Picasso.get().load(user.profileImageUrl).into(viewHolder.itemView.message_Button_image)
     }
@@ -73,7 +73,7 @@ class UserItem(val user:User): Item<GroupieViewHolder>(){
     }
 }
 
-class User(val uid: String, val username:String, val profileImageUrl: String){
+class User(val user_id: String, val user_name:String, val profileImageUrl: String){
     constructor() : this ("","","")
 }
 
