@@ -74,7 +74,7 @@ class UserItem2: Item<ViewHolder>(){
 class UserItem(val user:User): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
         // will be called in our list for each user objject later on...
-        viewHolder.itemView.message_Button.textView.text = "Hallo"
+        viewHolder.itemView.message_Button.text = user.user_name
 
        // Picasso.get().load(user.profileImageUrl).into(viewHolder.itemView.message_Button_image)
     }
