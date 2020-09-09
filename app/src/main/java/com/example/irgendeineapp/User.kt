@@ -1,0 +1,10 @@
+package com.example.irgendeineapp
+
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
+class User(val user_id: String, val user_name:String): Parcelable {
+    constructor() : this ("","")
+}
+

@@ -16,6 +16,11 @@ class MessagesActivity: AppCompatActivity()  {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages)
 
+       // val username = intent.getStringExtra(MainActivity.USER_KEY)
+        val user = intent.getParcelableExtra<User>(MainActivity.USER_KEY)
+
+        supportActionBar?.title = user.user_name
+
         val adapter = GroupAdapter<ViewHolder>()
         adapter.add(ChatToItem())
         adapter.add(ChatFromItem())

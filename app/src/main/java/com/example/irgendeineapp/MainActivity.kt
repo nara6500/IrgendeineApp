@@ -4,6 +4,7 @@ package com.example.irgendeineapp
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -30,6 +31,10 @@ class  MainActivity : AppCompatActivity() {
         chat_List.adapter = adapter*/
     }
 
+    companion object{
+        val USER_KEY = "USER_KEY"
+    }
+
     private fun fetchUsers(){
         val ref = FirebaseDatabase.getInstance().getReference("/user")
         Log.d("Ref", ref.toString());
@@ -52,7 +57,12 @@ class  MainActivity : AppCompatActivity() {
                 }
 
                 adapter.setOnItemClickListener { item, view ->
+
+                    val userItem = item as UserItem
+
                     val intent =Intent(view.context, MessagesActivity::class.java )
+                   // intent.putExtra(USER_KEY, userItem.user.user_name)
+                    intent.putExtra(USER_KEY, userItem.user)
                     startActivity(intent)
 
                 }
@@ -92,9 +102,5 @@ class UserItem(val user:User): Item<ViewHolder>(){
 }
 
 
-
-class User(val user_id: String, val user_name:String){
-    constructor() : this ("","")
-}
 
 
