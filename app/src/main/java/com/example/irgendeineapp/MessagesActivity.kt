@@ -25,15 +25,19 @@ class MessagesActivity: AppCompatActivity()  {
         val TAG = "ChatLog"
     }
 
+    val adapter = GroupAdapter<ViewHolder>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages)
 
-       val user = intent.getParcelableExtra<User>(MainActivity.USER_KEY)
+        recyclerview_chat_log.adapter = adapter
+
+        val user = intent.getParcelableExtra<User>(MainActivity.USER_KEY)
 
         supportActionBar?.title = user.user_name
 
-       //setupDummyData()
+        //setupDummyData()
         listenForMessages()
 
 
@@ -47,9 +51,18 @@ class MessagesActivity: AppCompatActivity()  {
         val ref = FirebaseDatabase.getInstance().getReference("/messages")
 
         ref.addChildEventListener(object: ChildEventListener{
+
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 val chatMessage = p0.getValue(ChatMessage::class.java)
                 Log.d(TAG, chatMessage?.text)
+
+                if(chatMessage != null){
+                    if(chatMessage.fromId == "0") {
+                        adapter.add(ChatFromItem(chatMessage.text))
+                    }else {
+                        adapter.add(ChatToItem(chatMessage.text))
+                    }
+                }
             }
 
             override fun onCancelled(p0: DatabaseError) {
@@ -78,7 +91,7 @@ class MessagesActivity: AppCompatActivity()  {
         val user = intent.getParcelableExtra<User>(MainActivity.USER_KEY)
         val toId = user.user_id
         Log.d(TAG, "Attempt to send message1....")
-      //  if (fromId == null ) return
+        //  if (fromId == null ) return
         Log.d(TAG, "Attempt to send message2....")
 
         val reference = FirebaseDatabase.getInstance().getReference("/messages").push()
