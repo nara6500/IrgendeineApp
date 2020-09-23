@@ -66,6 +66,8 @@ class MessagesActivity: AppCompatActivity()  {
                         adapter.add(ChatToItem(chatMessage.text, toUser!!))
                     }
                 }
+                recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
+
             }
 
             override fun onCancelled(p0: DatabaseError) {
@@ -105,6 +107,8 @@ class MessagesActivity: AppCompatActivity()  {
         reference.setValue(chatMessage)
             .addOnSuccessListener {
                 Log.d(TAG, "Saved our chat message:${reference.key}")
+                edittext_chat_log.text.clear()
+                recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
             }
     }
 
