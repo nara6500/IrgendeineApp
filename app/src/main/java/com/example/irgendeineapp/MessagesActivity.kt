@@ -110,6 +110,9 @@ class MessagesActivity: AppCompatActivity()  {
                 edittext_chat_log.text.clear()
                 recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
             }
+
+        val latestMessageRef = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId/$toId")
+        latestMessageRef.setValue(chatMessage)
     }
 
 
