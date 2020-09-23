@@ -26,6 +26,8 @@ class MessagesActivity: AppCompatActivity()  {
     }
 
     val adapter = GroupAdapter<ViewHolder>()
+    var toUser: User? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,11 +35,10 @@ class MessagesActivity: AppCompatActivity()  {
 
         recyclerview_chat_log.adapter = adapter
 
-        val user = intent.getParcelableExtra<User>(MainActivity.USER_KEY)
+        toUser = intent.getParcelableExtra<User>(MainActivity.USER_KEY)
 
-        supportActionBar?.title = user.user_name
+        supportActionBar?.title = toUser?.user_name
 
-        //setupDummyData()
         listenForMessages()
 
 
@@ -48,7 +49,9 @@ class MessagesActivity: AppCompatActivity()  {
     }
 
     private fun listenForMessages(){
-        val ref = FirebaseDatabase.getInstance().getReference("/messages")
+        val fromId = "0"
+        val toId = toUser?.user_id
+        val ref = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId")
 
         ref.addChildEventListener(object: ChildEventListener{
 
@@ -60,7 +63,7 @@ class MessagesActivity: AppCompatActivity()  {
                     if(chatMessage.fromId == "0") {
                         adapter.add(ChatFromItem(chatMessage.text))
                     }else {
-                        adapter.add(ChatToItem(chatMessage.text))
+                        adapter.add(ChatToItem(chatMessage.text, toUser!!))
                     }
                 }
             }
@@ -90,30 +93,25 @@ class MessagesActivity: AppCompatActivity()  {
         //val fromId = FirebaseAuth.getInstance().uid
         val user = intent.getParcelableExtra<User>(MainActivity.USER_KEY)
         val toId = user.user_id
+        val fromId = "0"
         Log.d(TAG, "Attempt to send message1....")
         //  if (fromId == null ) return
         Log.d(TAG, "Attempt to send message2....")
 
-        val reference = FirebaseDatabase.getInstance().getReference("/messages").push()
+       // val reference = FirebaseDatabase.getInstance().getReference("/messages").push()
+        val reference = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId").push()
 
-        val chatMessage = ChatMessage(reference.key!!, text, "0",toId, System.currentTimeMillis()/1000,"ID_test","invoke__test")
+        val chatMessage = ChatMessage(reference.key!!, text, fromId,toId, System.currentTimeMillis()/1000,"ID_test","invoke__test")
         reference.setValue(chatMessage)
             .addOnSuccessListener {
                 Log.d(TAG, "Saved our chat message:${reference.key}")
             }
     }
 
-    private fun setupDummyData(){
-        val adapter = GroupAdapter<ViewHolder>()
-        adapter.add(ChatToItem("erste Nachricht"))
-        adapter.add(ChatFromItem("zweite Nachricht"))
-        adapter.add(ChatToItem("dritte Nachricht"))
 
-        recyclerview_chat_log.adapter = adapter
-    }
 }
 
-class ChatToItem(val text: String): Item<ViewHolder>(){
+class ChatToItem(val text: String, val user:User): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.message_body.text = text
     }
