@@ -17,6 +17,13 @@ import kotlin.reflect.KMutableProperty0
 
 class  MainActivity : AppCompatActivity() {
 
+
+    companion object{
+        val USER_KEY = "USER_KEY"
+        val TAG = "LatestMessages"
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -32,15 +39,23 @@ class  MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        adapter.setOnItemClickListener { item, view ->
+
+            val intent =Intent(this, MessagesActivity::class.java )
+            val row = item as LatestMessageRow
+
+            intent.putExtra(USER_KEY, row.chatPartnerUser)
+
+            startActivity(intent)
+
+        }
+
 /*
         val adapter = GroupAdapter<ViewHolder>()
         adapter.add(UserItem2())
         chat_List.adapter = adapter*/
     }
 
-    companion object{
-        val USER_KEY = "USER_KEY"
-    }
     val adapter = GroupAdapter<ViewHolder>()
 
     val latestMessagesMap = HashMap<String, ChatMessage>()
@@ -79,47 +94,12 @@ class  MainActivity : AppCompatActivity() {
             }
         })
 
-        adapter.setOnItemClickListener { item, view ->
 
-            val intent =Intent(view.context, MessagesActivity::class.java )
-            intent.putExtra(USER_KEY, "")
-            startActivity(intent)
-
-        }
     }
 
 
 }
 
-class LatestMessageRow(val chatMessage: ChatMessage): Item<ViewHolder>(){
-    override fun bind(viewHolder: ViewHolder, position: Int) {
-        // will be called in our list for each user objject later on...
-        viewHolder.itemView.latest_message.text = chatMessage.text
-
-        val chatPartnerId: String
-        if(chatMessage.fromId == "0"){
-            chatPartnerId = chatMessage.toId
-        } else{
-            chatPartnerId = chatMessage.fromId
-        }
-
-        val ref = FirebaseDatabase.getInstance().getReference("/user/$chatPartnerId")
-        ref.addListenerForSingleValueEvent(object : ValueEventListener{
-            override fun onDataChange(p0: DataSnapshot) {
-                val user =p0.getValue(User::class.java)
-                viewHolder.itemView.user_name.text = user?.user_name
-            }
-            override fun onCancelled(error: DatabaseError) {
-
-            }
-        })
-        // Picasso.get().load(user.profileImageUrl).into(viewHolder.itemView.message_Button_image)
-    }
-
-    override fun getLayout(): Int {
-        return R.layout.user_row_message
-    }
-}
 
 
 

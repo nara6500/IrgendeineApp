@@ -39,6 +39,7 @@ class MessagesActivity: AppCompatActivity()  {
 
         supportActionBar?.title = toUser?.user_name
 
+
         listenForMessages()
 
 
