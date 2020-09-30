@@ -32,6 +32,15 @@ class  MainActivity : AppCompatActivity() {
     }
     val adapter = GroupAdapter<ViewHolder>()
 
+    val latestMessagesMap = HashMap<String, ChatMessage>()
+
+    private fun refreshRecyclerViewMessages(){
+        adapter.clear()
+        latestMessagesMap.values.forEach{
+            adapter.add(LatestMessageRow(it))
+        }
+    }
+
     private fun listenForLatestMessages(){
         val fromId ="0"
         val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId")
@@ -42,7 +51,11 @@ class  MainActivity : AppCompatActivity() {
             }
             override fun onChildChanged(p0: DataSnapshot, p1: String?) {
                 val chatMessage = p0.getValue(ChatMessage::class.java) ?: return
-                adapter.add(LatestMessageRow(chatMessage))
+
+                latestMessagesMap[p0.key!!] = chatMessage
+                refreshRecyclerViewMessages()
+
+                //adapter.add(LatestMessageRow(chatMessage))
             }
             override fun onCancelled(p0: DatabaseError) {
 
@@ -54,12 +67,18 @@ class  MainActivity : AppCompatActivity() {
 
             }
         })
+
+        adapter.setOnItemClickListener { item, view ->
+
+            val intent =Intent(view.context, MessagesActivity::class.java )
+            intent.putExtra(USER_KEY, "")
+            startActivity(intent)
+
+        }
     }
 
 
 }
-
-
 
 class LatestMessageRow(val chatMessage: ChatMessage): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {

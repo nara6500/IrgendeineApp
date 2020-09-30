@@ -103,7 +103,7 @@ class MessagesActivity: AppCompatActivity()  {
        // val reference = FirebaseDatabase.getInstance().getReference("/messages").push()
         val reference = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId").push()
 
-        val chatMessage = ChatMessage(reference.key!!, text, fromId,toId, System.currentTimeMillis()/1000,"ID_test","invoke__test")
+        val chatMessage = ChatMessage(reference.key!!, text, fromId,toId, System.currentTimeMillis()/1000,"ID_test","invoke_test")
         reference.setValue(chatMessage)
             .addOnSuccessListener {
                 Log.d(TAG, "Saved our chat message:${reference.key}")
