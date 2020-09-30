@@ -5,12 +5,14 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.firebase.database.*
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.user_row_message.view.*
+import kotlin.reflect.KMutableProperty0
 
 
 class  MainActivity : AppCompatActivity() {
@@ -94,6 +96,23 @@ class LatestMessageRow(val chatMessage: ChatMessage): Item<ViewHolder>(){
         // will be called in our list for each user objject later on...
         viewHolder.itemView.latest_message.text = chatMessage.text
 
+        val chatPartnerId: String
+        if(chatMessage.fromId == "0"){
+            chatPartnerId = chatMessage.toId
+        } else{
+            chatPartnerId = chatMessage.fromId
+        }
+
+        val ref = FirebaseDatabase.getInstance().getReference("/user/$chatPartnerId")
+        ref.addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onDataChange(p0: DataSnapshot) {
+                val user =p0.getValue(User::class.java)
+                viewHolder.itemView.user_name.text = user?.user_name
+            }
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
         // Picasso.get().load(user.profileImageUrl).into(viewHolder.itemView.message_Button_image)
     }
 
