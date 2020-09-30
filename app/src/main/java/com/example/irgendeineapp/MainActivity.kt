@@ -21,6 +21,15 @@ class  MainActivity : AppCompatActivity() {
         recyclerview_latest_messages.adapter = adapter
         listenForLatestMessages()
 
+        chats_button.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
+        contacts_button.setOnClickListener {
+            val intent = Intent(this, ContactActivity::class.java)
+            startActivity(intent)
+        }
+
 /*
         val adapter = GroupAdapter<ViewHolder>()
         adapter.add(UserItem2())
