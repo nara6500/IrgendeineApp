@@ -25,10 +25,10 @@ class LatestMessageRow(val chatMessage: ChatMessage): Item<ViewHolder>(){
         val ref = FirebaseDatabase.getInstance().getReference("/user/$chatPartnerId")
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(p0: DataSnapshot) {
-                val chatPartnerUser =p0.getValue(User::class.java)
+                chatPartnerUser =p0.getValue(User::class.java)
                 viewHolder.itemView.user_name.text = chatPartnerUser?.user_name
             }
-            override fun onCancelled(error: DatabaseError) {
+            override fun onCancelled(p0: DatabaseError) {
 
             }
         })

@@ -35,7 +35,7 @@ class MessagesActivity: AppCompatActivity()  {
 
         recyclerview_chat_log.adapter = adapter
 
-        toUser = intent.getParcelableExtra<User>(MainActivity.USER_KEY)
+        toUser = intent.getParcelableExtra<User>(ContactActivity.USER_KEY)
 
         supportActionBar?.title = toUser?.user_name
 
@@ -94,7 +94,7 @@ class MessagesActivity: AppCompatActivity()  {
         val text = edittext_chat_log.text.toString()
 
         //val fromId = FirebaseAuth.getInstance().uid
-        val user = intent.getParcelableExtra<User>(MainActivity.USER_KEY)
+        val user = intent.getParcelableExtra<User>(ContactActivity.USER_KEY)
         val toId = user.user_id
         val fromId = "0"
         Log.d(TAG, "Attempt to send message1....")

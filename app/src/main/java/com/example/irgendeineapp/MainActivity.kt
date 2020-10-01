@@ -19,7 +19,7 @@ class  MainActivity : AppCompatActivity() {
 
 
     companion object{
-        val USER_KEY = "USER_KEY"
+        var currentUser: User? = null
         val TAG = "LatestMessages"
     }
 
@@ -28,7 +28,7 @@ class  MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         recyclerview_latest_messages.adapter = adapter
-        listenForLatestMessages()
+
 
         chats_button.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
@@ -44,12 +44,13 @@ class  MainActivity : AppCompatActivity() {
             val intent =Intent(this, MessagesActivity::class.java )
             val row = item as LatestMessageRow
 
-            intent.putExtra(USER_KEY, row.chatPartnerUser)
+            intent.putExtra(ContactActivity.USER_KEY, row.chatPartnerUser)
 
             startActivity(intent)
 
         }
 
+        listenForLatestMessages()
 /*
         val adapter = GroupAdapter<ViewHolder>()
         adapter.add(UserItem2())
