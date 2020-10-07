@@ -30,6 +30,11 @@ class  ContactActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        notes_button.setOnClickListener {
+            val intent = Intent(this, NotesActivity::class.java)
+            startActivity(intent)
+        }
+
         fetchUsers()
 /*
         val adapter = GroupAdapter<ViewHolder>()

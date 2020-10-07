@@ -38,6 +38,10 @@ class  MainActivity : AppCompatActivity() {
             val intent = Intent(this, ContactActivity::class.java)
             startActivity(intent)
         }
+        notes_button.setOnClickListener {
+            val intent = Intent(this, NotesActivity::class.java)
+            startActivity(intent)
+        }
 
         adapter.setOnItemClickListener { item, view ->
 
