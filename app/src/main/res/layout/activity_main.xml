@@ -23,6 +23,7 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="80dp"
+
         android:background="@color/cardview_dark_background"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -34,11 +35,12 @@
             android:id="@+id/chats_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginTop="10dp"
+            android:paddingTop="10dp"
             android:layout_weight="1"
             android:background="@color/cardview_dark_background"
             android:drawableTop="@drawable/ic_baseline_chat_bubble_outline_24"
             android:drawableTint="@android:color/white"
+            android:focusable="auto"
             android:text="Nachrichten"
             android:textColor="@android:color/white" />
 
@@ -46,8 +48,8 @@
             android:id="@+id/contacts_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginTop="10dp"
             android:layout_weight="1"
+            android:paddingTop="10dp"
             android:background="@color/cardview_dark_background"
             android:drawableTop="@drawable/ic_baseline_people_outline_24"
             android:drawableTint="@android:color/white"
@@ -59,13 +61,14 @@
             android:id="@+id/notes_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginTop="10dp"
             android:layout_weight="1"
+            android:paddingTop="10dp"
             android:background="@color/cardview_dark_background"
-            android:drawableTop="?attr/actionModePasteDrawable"
+            android:drawableTop="@drawable/ic_baseline_menu_book_24"
             android:drawableTint="@android:color/white"
             android:text="Notes"
             android:textColor="@android:color/white" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

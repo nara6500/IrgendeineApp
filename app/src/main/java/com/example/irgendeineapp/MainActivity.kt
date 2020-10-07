@@ -1,18 +1,23 @@
 package com.example.irgendeineapp
 
 
+import android.annotation.SuppressLint
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Color
+import android.graphics.Color.green
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import androidx.recyclerview.widget.DividerItemDecoration
-import com.google.firebase.database.*
+import android.view.MotionEvent
+import android.view.View
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
 import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.user_row_message.view.*
-import kotlin.reflect.KMutableProperty0
 
 
 class  MainActivity : AppCompatActivity() {
@@ -24,6 +29,8 @@ class  MainActivity : AppCompatActivity() {
     }
 
 
+    @SuppressLint("ResourceAsColor")
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -42,6 +49,8 @@ class  MainActivity : AppCompatActivity() {
             val intent = Intent(this, NotesActivity::class.java)
             startActivity(intent)
         }
+
+        chats_button.setBackgroundColor(R.color.colorPrimaryDark)
 
         adapter.setOnItemClickListener { item, view ->
 

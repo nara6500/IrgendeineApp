@@ -36,9 +36,9 @@ class MessagesActivity: AppCompatActivity()  {
         recyclerview_chat_log.adapter = adapter
 
         toUser = intent.getParcelableExtra<User>(ContactActivity.USER_KEY)
-
-        supportActionBar?.title = toUser?.user_name
-
+        val toolbar = supportActionBar
+        toolbar?.title = toUser?.user_name
+        toolbar?.setDisplayHomeAsUpEnabled(true)
 
         listenForMessages()
 
@@ -48,6 +48,12 @@ class MessagesActivity: AppCompatActivity()  {
             performSendMessage()
         }
     }
+
+
+override fun onSupportNavigateUp(): Boolean {
+    onBackPressed()
+    return true
+}
 
 
 

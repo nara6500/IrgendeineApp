@@ -1,5 +1,6 @@
 package com.example.irgendeineapp
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -17,6 +18,7 @@ import kotlinx.android.synthetic.main.user_row_contact.view.*
 
 class  ContactActivity : AppCompatActivity() {
 
+    @SuppressLint("ResourceAsColor")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -34,6 +36,9 @@ class  ContactActivity : AppCompatActivity() {
             val intent = Intent(this, NotesActivity::class.java)
             startActivity(intent)
         }
+
+        contacts_button.setBackgroundColor(R.color.colorPrimaryDark)
+
 
         fetchUsers()
 /*
