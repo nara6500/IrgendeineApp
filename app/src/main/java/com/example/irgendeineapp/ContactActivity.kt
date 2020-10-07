@@ -12,7 +12,7 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.user_row_message.view.*
+import kotlinx.android.synthetic.main.user_row_contact.view.*
 
 
 class  ContactActivity : AppCompatActivity() {
@@ -103,7 +103,7 @@ class UserItem(val user:User): Item<ViewHolder>(){
 
 
     override fun getLayout(): Int {
-        return R.layout.user_row_message
+        return R.layout.user_row_contact
     }
 }
 
