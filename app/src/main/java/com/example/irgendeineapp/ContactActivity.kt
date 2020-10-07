@@ -4,7 +4,10 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
+import androidx.core.app.NavUtils
 import com.google.firebase.database.*
+import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
@@ -34,6 +37,10 @@ class  ContactActivity : AppCompatActivity() {
         chat_List.adapter = adapter*/
     }
 
+
+
+
+
     companion object{
         val USER_KEY = "USER_KEY"
     }
@@ -53,7 +60,7 @@ class  ContactActivity : AppCompatActivity() {
 
                     Log.d("NewMessage", it.toString())
                     val user = it.getValue(User::class.java)
-                    if (user != null) {
+                    if (user != null && user.user_id !="0") {
                         adapter.add(UserItem(user))
                         Log.d("allright", user.toString())
                     } else
@@ -90,8 +97,10 @@ class UserItem(val user:User): Item<ViewHolder>(){
         // will be called in our list for each user objject later on...
         viewHolder.itemView.user_name.text = user.user_name
 
-        // Picasso.get().load(user.profileImageUrl).into(viewHolder.itemView.message_Button_image)
+        val targetImageView = viewHolder.itemView.user_photo
+        Picasso.get().load(user?.user_photo).into(targetImageView)
     }
+
 
     override fun getLayout(): Int {
         return R.layout.user_row_message

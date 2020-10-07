@@ -49,6 +49,8 @@ class MessagesActivity: AppCompatActivity()  {
         }
     }
 
+
+
     private fun listenForMessages(){
         val fromId = "0"
         val toId = toUser?.user_id

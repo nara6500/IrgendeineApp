@@ -1,9 +1,11 @@
 package com.example.irgendeineapp
 
+import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.squareup.picasso.Picasso
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.user_row_message.view.*
@@ -27,12 +29,14 @@ class LatestMessageRow(val chatMessage: ChatMessage): Item<ViewHolder>(){
             override fun onDataChange(p0: DataSnapshot) {
                 chatPartnerUser =p0.getValue(User::class.java)
                 viewHolder.itemView.user_name.text = chatPartnerUser?.user_name
+                Picasso.get().load(chatPartnerUser?.user_photo).into(viewHolder.itemView.user_photo)
+
             }
             override fun onCancelled(p0: DatabaseError) {
 
             }
         })
-        // Picasso.get().load(user.profileImageUrl).into(viewHolder.itemView.message_Button_image)
+
     }
 
     override fun getLayout(): Int {
