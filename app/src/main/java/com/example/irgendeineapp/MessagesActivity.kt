@@ -27,7 +27,6 @@ class MessagesActivity: AppCompatActivity()  {
     val answer_adapter = GroupAdapter<ViewHolder>()
     var toUser: User? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages)
@@ -125,17 +124,20 @@ override fun onSupportNavigateUp(): Boolean {
 
     //read available answers from Firebase
     private fun provideAnswers(){
+        //currently set as default. Subject to change later
+        val currentAnswer = "A09"
         val answersRef = FirebaseDatabase.getInstance().getReference("/user-messages/0/0")
         answersRef.addListenerForSingleValueEvent(object: ValueEventListener{
             override fun onDataChange(p0: DataSnapshot) {
                 p0.children.forEach {
                     //answer_adapter.add(UserAnswer(it.toString()))
+                    if(it.key == currentAnswer){
                     val actualMessage = it.child("/text")
                     actualMessage.children.forEach{
                         answer_adapter.add(UserAnswer(it.value.toString()))
                         Log.d("Answers", it.toString())
                     }
-                }
+                }}
             }
             override fun onCancelled(error: DatabaseError) {
             }

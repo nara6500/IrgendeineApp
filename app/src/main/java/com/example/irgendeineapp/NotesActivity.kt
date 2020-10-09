@@ -85,19 +85,17 @@ class NotesActivity: AppCompatActivity() {
 
         //Send Message to Firebase
         private fun performSendMessage(){
-            val text = edittext_chat_log.text.toString()
-
-
+            //val text = edittext_chat_log.text.toString()
 
             val toId = "0"
             val fromId = "0"
             val reference = FirebaseDatabase.getInstance().getReference("/notes/$fromId").push()
 
-            val chatMessage = ChatMessage(reference.key!!, text, fromId,toId, System.currentTimeMillis()/1000,"ID_test","invoke_test")
+            val chatMessage = ChatMessage(reference.key!!, "", fromId,toId, System.currentTimeMillis()/1000,"ID_test","invoke_test")
             reference.setValue(chatMessage)
                 .addOnSuccessListener {
                     Log.d(TAG, "Saved our chat message:${reference.key}")
-                    edittext_chat_log.text.clear()
+                    //edittext_chat_log.text.clear()
                     recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
                 }
 
