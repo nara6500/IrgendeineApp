@@ -5,10 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
@@ -18,6 +15,7 @@ import kotlinx.android.synthetic.main.activity_messages.*
 import kotlinx.android.synthetic.main.my_message.view.*
 import kotlinx.android.synthetic.main.my_message.view.message_body
 import kotlinx.android.synthetic.main.their_message.view.*
+import kotlinx.android.synthetic.main.user_answers.view.*
 
 class MessagesActivity: AppCompatActivity()  {
 
@@ -26,6 +24,7 @@ class MessagesActivity: AppCompatActivity()  {
     }
 
     val adapter = GroupAdapter<ViewHolder>()
+    val answer_adapter = GroupAdapter<ViewHolder>()
     var toUser: User? = null
 
 
@@ -34,6 +33,7 @@ class MessagesActivity: AppCompatActivity()  {
         setContentView(R.layout.activity_messages)
 
         recyclerview_chat_log.adapter = adapter
+        recyclerview_answers.adapter = answer_adapter
 
         toUser = intent.getParcelableExtra<User>(ContactActivity.USER_KEY)
         val toolbar = supportActionBar
@@ -41,8 +41,7 @@ class MessagesActivity: AppCompatActivity()  {
         toolbar?.setDisplayHomeAsUpEnabled(true)
 
         listenForMessages()
-
-
+        provideAnswers()
         button.setOnClickListener {
 
             performSendMessage()
@@ -99,7 +98,7 @@ override fun onSupportNavigateUp(): Boolean {
 
     //Send Message to Firebase
     private fun performSendMessage(){
-        val text = edittext_chat_log.text.toString()
+        val text = recyclerview_answers.answer.text.toString()
 
         //val fromId = FirebaseAuth.getInstance().uid
         val user = intent.getParcelableExtra<User>(ContactActivity.USER_KEY)
@@ -116,7 +115,7 @@ override fun onSupportNavigateUp(): Boolean {
         reference.setValue(chatMessage)
             .addOnSuccessListener {
                 Log.d(TAG, "Saved our chat message:${reference.key}")
-                edittext_chat_log.text.clear()
+               // edittext_chat_log.text.clear()
                 recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
             }
 
@@ -124,7 +123,24 @@ override fun onSupportNavigateUp(): Boolean {
         latestMessageRef.setValue(chatMessage)
     }
 
-
+    //read available answers from Firebase
+    private fun provideAnswers(){
+        val answersRef = FirebaseDatabase.getInstance().getReference("/user-messages/0/0")
+        answersRef.addListenerForSingleValueEvent(object: ValueEventListener{
+            override fun onDataChange(p0: DataSnapshot) {
+                p0.children.forEach {
+                    //answer_adapter.add(UserAnswer(it.toString()))
+                    val actualMessage = it.child("/text")
+                    actualMessage.children.forEach{
+                        answer_adapter.add(UserAnswer(it.value.toString()))
+                        Log.d("Answers", it.toString())
+                    }
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+            }
+        })
+    }
 }
 
 class ChatToItem(val text: String, val user:User): Item<ViewHolder>(){
@@ -143,5 +159,14 @@ class ChatFromItem(val text: String): Item<ViewHolder>(){
     }
     override fun getLayout(): Int {
         return R.layout.their_message
+    }
+}
+
+class UserAnswer(val text: String): Item<ViewHolder>(){
+    override fun bind(viewHolder: ViewHolder, position: Int) {
+        viewHolder.itemView.answer.text = text
+    }
+    override fun getLayout(): Int {
+        return R.layout.user_answers
     }
 }
