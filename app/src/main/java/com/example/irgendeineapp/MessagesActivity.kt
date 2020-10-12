@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.activity_messages.*
 import kotlinx.android.synthetic.main.my_message.view.*
 import kotlinx.android.synthetic.main.my_message.view.message_body
 import kotlinx.android.synthetic.main.their_message.view.*
+import kotlinx.android.synthetic.main.user_answers.*
 import kotlinx.android.synthetic.main.user_answers.view.*
 
 class MessagesActivity: AppCompatActivity()  {
@@ -24,15 +25,16 @@ class MessagesActivity: AppCompatActivity()  {
     }
 
     val adapter = GroupAdapter<ViewHolder>()
-    val answer_adapter = GroupAdapter<ViewHolder>()
+    val answerAdapter = GroupAdapter<ViewHolder>()
     var toUser: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d("STATUS", "Starting chatlog overview.")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages)
 
         recyclerview_chat_log.adapter = adapter
-        recyclerview_answers.adapter = answer_adapter
+        recyclerview_answers.adapter = answerAdapter
 
         toUser = intent.getParcelableExtra<User>(ContactActivity.USER_KEY)
         val toolbar = supportActionBar
@@ -40,11 +42,13 @@ class MessagesActivity: AppCompatActivity()  {
         toolbar?.setDisplayHomeAsUpEnabled(true)
 
         listenForMessages()
-        provideAnswers()
         button.setOnClickListener {
-
             performSendMessage()
         }
+        answer.setOnClickListener{
+            setAnswerToSend()
+        }
+        provideAnswers("A09")
     }
 
 
@@ -67,14 +71,13 @@ override fun onSupportNavigateUp(): Boolean {
                 Log.d(TAG, chatMessage?.text)
 
                 if(chatMessage != null){
-                    if(chatMessage.fromId == "0") {
+                    if(chatMessage.from == "0") {
                         adapter.add(ChatFromItem(chatMessage.text))
                     }else {
                         adapter.add(ChatToItem(chatMessage.text, toUser!!))
                     }
                 }
                 recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
-
             }
 
             override fun onCancelled(p0: DatabaseError) {
@@ -108,9 +111,9 @@ override fun onSupportNavigateUp(): Boolean {
         Log.d(TAG, "Attempt to send message2....")
 
        // val reference = FirebaseDatabase.getInstance().getReference("/messages").push()
-        val reference = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId").push()
+        val reference = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId").push() /*<--THIS HAS TO GO*/
 
-        val chatMessage = ChatMessage(reference.key!!, text, fromId,toId, System.currentTimeMillis()/1000,"ID_test","invoke_test")
+        val chatMessage = ChatMessage(fromId, reference.key!!, text,toId)
         reference.setValue(chatMessage)
             .addOnSuccessListener {
                 Log.d(TAG, "Saved our chat message:${reference.key}")
@@ -123,25 +126,27 @@ override fun onSupportNavigateUp(): Boolean {
     }
 
     //read available answers from Firebase
-    private fun provideAnswers(){
-        //currently set as default. Subject to change later
-        val currentAnswer = "A09"
+    private fun provideAnswers(invoke:String){
+        //currently set as default. Subject to change later. Will become var from function parameter
         val answersRef = FirebaseDatabase.getInstance().getReference("/user-messages/0/0")
         answersRef.addListenerForSingleValueEvent(object: ValueEventListener{
             override fun onDataChange(p0: DataSnapshot) {
                 p0.children.forEach {
-                    //answer_adapter.add(UserAnswer(it.toString()))
-                    if(it.key == currentAnswer){
+                    if(it.key == invoke){
                     val actualMessage = it.child("/text")
                     actualMessage.children.forEach{
-                        answer_adapter.add(UserAnswer(it.value.toString()))
-                        Log.d("Answers", it.toString())
+                        answerAdapter.add(UserAnswer(it.value.toString()))
                     }
                 }}
             }
             override fun onCancelled(error: DatabaseError) {
             }
         })
+    }
+
+    //select answer as answer to write in chatlog
+    public fun setAnswerToSend(){
+        val text = recyclerview_answers.answer.text.toString()
     }
 }
 
@@ -167,6 +172,9 @@ class ChatFromItem(val text: String): Item<ViewHolder>(){
 class UserAnswer(val text: String): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.answer.text = text
+        /*viewHolder.itemView.answer.setOnClickListener{
+            Log.d("BUTTON PRESSED",this.text)
+        }*/
     }
     override fun getLayout(): Int {
         return R.layout.user_answers

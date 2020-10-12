@@ -55,7 +55,7 @@ class NotesActivity: AppCompatActivity() {
                     Log.d(TAG, chatMessage?.text)
 
                     if(chatMessage != null){
-                        if(chatMessage.fromId == "0") {
+                        if(chatMessage.from == "0") {
                             adapter.add(ChatFromItem(chatMessage.text))
                         }else {
 
@@ -91,7 +91,7 @@ class NotesActivity: AppCompatActivity() {
             val fromId = "0"
             val reference = FirebaseDatabase.getInstance().getReference("/notes/$fromId").push()
 
-            val chatMessage = ChatMessage(reference.key!!, "", fromId,toId, System.currentTimeMillis()/1000,"ID_test","invoke_test")
+            val chatMessage = ChatMessage(fromId,reference.key!!, "", toId)
             reference.setValue(chatMessage)
                 .addOnSuccessListener {
                     Log.d(TAG, "Saved our chat message:${reference.key}")

@@ -14,14 +14,14 @@ class LatestMessageRow(val chatMessage: ChatMessage): Item<ViewHolder>(){
     var chatPartnerUser:User? = null
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
-        // will be called in our list for each user objject later on...
+        // will be called in our list for each user object later on...
         viewHolder.itemView.latest_message.text = chatMessage.text
 
         val chatPartnerId: String
-        if(chatMessage.fromId == "0"){
-            chatPartnerId = chatMessage.toId
+        if(chatMessage.from == "0"){
+            chatPartnerId = chatMessage.to
         } else{
-            chatPartnerId = chatMessage.fromId
+            chatPartnerId = chatMessage.from
         }
 
         val ref = FirebaseDatabase.getInstance().getReference("/user/$chatPartnerId")
