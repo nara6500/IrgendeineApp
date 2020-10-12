@@ -13,7 +13,10 @@ import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_messages.*
+import kotlinx.android.synthetic.main.activity_messages.button
+import kotlinx.android.synthetic.main.activity_messages.recyclerview_chat_log
 import kotlinx.android.synthetic.main.my_message.view.*
+import kotlinx.android.synthetic.main.notes.*
 
 class NotesActivity: AppCompatActivity() {
     companion object{
@@ -25,7 +28,7 @@ class NotesActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_messages)
+        setContentView(R.layout.notes)
 
         recyclerview_chat_log.adapter = adapter
 
@@ -85,17 +88,17 @@ class NotesActivity: AppCompatActivity() {
 
         //Send Message to Firebase
         private fun performSendMessage(){
-            //val text = edittext_chat_log.text.toString()
+            val text = edittext_chat_log.text.toString()
 
             val toId = "0"
             val fromId = "0"
             val reference = FirebaseDatabase.getInstance().getReference("/notes/$fromId").push()
 
-            val chatMessage = ChatMessage(fromId,reference.key!!, "", toId)
+            val chatMessage = ChatMessage(fromId,reference.key!!, text , toId)
             reference.setValue(chatMessage)
                 .addOnSuccessListener {
                     Log.d(TAG, "Saved our chat message:${reference.key}")
-                    //edittext_chat_log.text.clear()
+                    edittext_chat_log.text.clear()
                     recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
                 }
 
