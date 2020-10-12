@@ -45,7 +45,7 @@ class MessagesActivity: AppCompatActivity()  {
         button.setOnClickListener {
             performSendMessage()
         }
-        answer.setOnClickListener{
+        answer?.setOnClickListener{
             setAnswerToSend()
         }
         provideAnswers("A09")
@@ -67,7 +67,7 @@ override fun onSupportNavigateUp(): Boolean {
         ref.addChildEventListener(object: ChildEventListener{
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
-                val chatMessage = p0.getValue(ChatMessage::class.java)
+                val chatMessage = p0.getValue(ChatMessage::class.java) ?: return
                 Log.d(TAG, chatMessage?.text)
 
                 if(chatMessage != null){
