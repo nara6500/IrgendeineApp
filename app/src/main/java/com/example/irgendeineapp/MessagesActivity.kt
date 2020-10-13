@@ -132,10 +132,11 @@ override fun onSupportNavigateUp(): Boolean {
         answersRef.addListenerForSingleValueEvent(object: ValueEventListener{
             override fun onDataChange(p0: DataSnapshot) {
                 p0.children.forEach {
-                    if(it.key == invoke){
+                    if(it.key == invoke && it.child("/to").value == toUser?.user_id){
                     val actualMessage = it.child("/text")
                     actualMessage.children.forEach{
                         answerAdapter.add(UserAnswer(it.value.toString()))
+
                     }
                 }}
             }
