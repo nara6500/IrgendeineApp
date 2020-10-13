@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.xwray.groupie.GroupAdapter
@@ -34,8 +35,7 @@ class MessagesActivity: AppCompatActivity()  {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages)
 
-        recyclerview_chat_log.adapter = adapter
-        recyclerview_answers.adapter = answerAdapter
+
 
         toUser = intent.getParcelableExtra<User>(ContactActivity.USER_KEY)
         val toolbar = supportActionBar
@@ -43,13 +43,18 @@ class MessagesActivity: AppCompatActivity()  {
         toolbar?.setDisplayHomeAsUpEnabled(true)
 
         listenForMessages()
-        button.setOnClickListener {
+         button.setOnClickListener {
             performSendMessage()
         }
-        answer?.setOnClickListener{
-            setAnswerToSend()
-        }
-        provideAnswers()
+
+
+
+
+
+
+
+        recyclerview_answers.adapter = answerAdapter
+        recyclerview_chat_log.adapter = adapter
     }
 
 
@@ -79,6 +84,7 @@ override fun onSupportNavigateUp(): Boolean {
                     }
                 }
                 recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
+
             }
 
             override fun onCancelled(p0: DatabaseError) {
@@ -101,7 +107,7 @@ override fun onSupportNavigateUp(): Boolean {
 
     //Send Message to Firebase
     private fun performSendMessage(){
-        val text = recyclerview_answers.answer.text.toString()
+        val text = selectedAnswer?.text
 
         //val fromId = FirebaseAuth.getInstance().uid
         val user = intent.getParcelableExtra<User>(ContactActivity.USER_KEY)
@@ -114,12 +120,13 @@ override fun onSupportNavigateUp(): Boolean {
        // val reference = FirebaseDatabase.getInstance().getReference("/messages").push()
         val reference = FirebaseDatabase.getInstance().getReference("/test/$fromId/$toId").push() /*<--THIS HAS TO GO*/
 
-        val chatMessage = ChatMessage(fromId, reference.key!!, text,toId)
+        val chatMessage = ChatMessage(fromId, reference.key!!, text!!,toId)
         reference.setValue(chatMessage)
             .addOnSuccessListener {
-                Log.d(TAG, "Saved our chat message:${reference}")
+
                // edittext_chat_log.text.clear()
-                invoke = "AN02"      //TODO: just for testing
+                invoke = selectedAnswer?.invoke.toString()
+                answerAdapter.clear()
                 recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
             }
 
@@ -164,6 +171,7 @@ override fun onSupportNavigateUp(): Boolean {
 
     }
 
+    var selectedAnswer :UserAnswer? = null
     //read available answers from Firebase
     private fun provideAnswers(){
         //currently set as default. Subject to change later. Will become var from function parameter
@@ -173,21 +181,27 @@ override fun onSupportNavigateUp(): Boolean {
                 p0.children.forEach {
                     if(it.key == invoke && it.child("/to").value == toUser?.user_id){
                     val actualMessage = it.child("/text")
+                        val invoke = it.child("/invoke").value.toString()
                     actualMessage.children.forEach{
-                        answerAdapter.add(UserAnswer(it.value.toString()))
+                        Log.d("invoke", invoke)
+                        answerAdapter.add(UserAnswer(it.value.toString(), invoke))
 
                     }
                 }}
+
+                answerAdapter.setOnItemClickListener { item, view ->
+                    val answerItem = item as UserAnswer
+                    selectedAnswer = answerItem
+                }
+
+
             }
             override fun onCancelled(error: DatabaseError) {
             }
         })
     }
 
-    //select answer as answer to write in chatlog
-    public fun setAnswerToSend(){
-        val text = recyclerview_answers.answer.text.toString()
-    }
+
 }
 
 class ChatToItem(val text: String, val user:User): Item<ViewHolder>(){
@@ -209,7 +223,7 @@ class ChatFromItem(val text: String): Item<ViewHolder>(){
     }
 }
 
-class UserAnswer(val text: String): Item<ViewHolder>(){
+class UserAnswer(val text: String, val invoke: String): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.answer.text = text
         /*viewHolder.itemView.answer.setOnClickListener{
