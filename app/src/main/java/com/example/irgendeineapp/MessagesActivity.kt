@@ -27,6 +27,7 @@ class MessagesActivity: AppCompatActivity()  {
     val adapter = GroupAdapter<ViewHolder>()
     val answerAdapter = GroupAdapter<ViewHolder>()
     var toUser: User? = null
+    var invoke = "A01"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d("STATUS", "Starting chatlog overview.")
@@ -48,7 +49,7 @@ class MessagesActivity: AppCompatActivity()  {
         answer?.setOnClickListener{
             setAnswerToSend()
         }
-        provideAnswers("A09")
+        provideAnswers()
     }
 
 
@@ -62,7 +63,7 @@ override fun onSupportNavigateUp(): Boolean {
     private fun listenForMessages(){
         val fromId = "0"
         val toId = toUser?.user_id
-        val ref = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId")
+        val ref = FirebaseDatabase.getInstance().getReference("/test/$fromId/$toId")
 
         ref.addChildEventListener(object: ChildEventListener{
 
@@ -111,22 +112,52 @@ override fun onSupportNavigateUp(): Boolean {
         Log.d(TAG, "Attempt to send message2....")
 
        // val reference = FirebaseDatabase.getInstance().getReference("/messages").push()
-        val reference = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId").push() /*<--THIS HAS TO GO*/
+        val reference = FirebaseDatabase.getInstance().getReference("/test/$fromId/$toId").push() /*<--THIS HAS TO GO*/
 
         val chatMessage = ChatMessage(fromId, reference.key!!, text,toId)
         reference.setValue(chatMessage)
             .addOnSuccessListener {
-                Log.d(TAG, "Saved our chat message:${reference.key}")
+                Log.d(TAG, "Saved our chat message:${reference}")
                // edittext_chat_log.text.clear()
+                invoke = "A02"      //TODO: just for testing
                 recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
             }
 
         val latestMessageRef = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId/$toId")
         latestMessageRef.setValue(chatMessage)
+
+        provideUserAnswers()
+    }
+
+    private fun provideUserAnswers(){
+
+        //currently set as default. Subject to change later. Will become var from function parameter
+        val answersRef = FirebaseDatabase.getInstance().getReference("/user-messages/0/2")
+        answersRef.addListenerForSingleValueEvent(object: ValueEventListener{
+            override fun onDataChange(p0: DataSnapshot) {
+                p0.children.forEach {
+                    if(it.key == invoke){
+                        val fromId = it.child("/from").value.toString()
+                        val toId = it.child("/to").value.toString()
+                        val reference = FirebaseDatabase.getInstance().getReference("/test/$fromId/$toId").push()
+                        invoke = it.key!!
+                        val actualMessage = it.child("/text").toString()
+                        val chatMessage = ChatMessage(fromId, it.key.toString(), actualMessage,toId)
+                        reference.setValue(chatMessage)
+                    }else{
+                        Log.d("keine antwort", it.key)
+                    }
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+            }
+        })
+
+
     }
 
     //read available answers from Firebase
-    private fun provideAnswers(invoke:String){
+    private fun provideAnswers(){
         //currently set as default. Subject to change later. Will become var from function parameter
         val answersRef = FirebaseDatabase.getInstance().getReference("/user-messages/0/0")
         answersRef.addListenerForSingleValueEvent(object: ValueEventListener{
