@@ -27,7 +27,7 @@ class MessagesActivity: AppCompatActivity()  {
     val adapter = GroupAdapter<ViewHolder>()
     val answerAdapter = GroupAdapter<ViewHolder>()
     var toUser: User? = null
-    var invoke = "A01"
+    var invoke = "SP01"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d("STATUS", "Starting chatlog overview.")
@@ -119,7 +119,7 @@ override fun onSupportNavigateUp(): Boolean {
             .addOnSuccessListener {
                 Log.d(TAG, "Saved our chat message:${reference}")
                // edittext_chat_log.text.clear()
-                invoke = "A02"      //TODO: just for testing
+                invoke = "AN02"      //TODO: just for testing
                 recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
             }
 
@@ -139,11 +139,19 @@ override fun onSupportNavigateUp(): Boolean {
                     if(it.key == invoke){
                         val fromId = it.child("/from").value.toString()
                         val toId = it.child("/to").value.toString()
-                        val reference = FirebaseDatabase.getInstance().getReference("/test/$fromId/$toId").push()
+                        val reference = FirebaseDatabase.getInstance().getReference("/test/$toId/$fromId").push()
                         invoke = it.key!!
-                        val actualMessage = it.child("/text").toString()
+                        val actualMessage = it.child("/text").value.toString()
                         val chatMessage = ChatMessage(fromId, it.key.toString(), actualMessage,toId)
                         reference.setValue(chatMessage)
+                            .addOnSuccessListener {
+                                Log.d(TAG, "Saved our chat message:${reference}")
+                                // edittext_chat_log.text.clear()
+                                recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
+                                val latestMessageRef = FirebaseDatabase.getInstance().getReference("/latest-messages/$toId/$fromId")
+                                latestMessageRef.setValue(chatMessage)
+                            }
+
                     }else{
                         Log.d("keine antwort", it.key)
                     }
