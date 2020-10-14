@@ -51,7 +51,7 @@ class MessagesActivity: AppCompatActivity()  {
 
 
 
-
+        provideAnswers()
 
         recyclerview_answers.adapter = answerAdapter
         recyclerview_chat_log.adapter = adapter
