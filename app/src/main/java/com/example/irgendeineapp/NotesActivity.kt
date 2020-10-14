@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -23,13 +24,13 @@ class NotesActivity: AppCompatActivity() {
         val TAG = "ChatLog"
     }
 
-
+    lateinit var mAuth: FirebaseAuth
     val adapter = GroupAdapter<ViewHolder>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.notes)
-
+        mAuth = FirebaseAuth.getInstance()
         recyclerview_chat_log.adapter = adapter
 
 
@@ -48,8 +49,9 @@ class NotesActivity: AppCompatActivity() {
 
 
         private fun listenForMessages(){
+            val player = mAuth.currentUser?.uid
             val fromId = "0"
-            val ref = FirebaseDatabase.getInstance().getReference("/notes/$fromId")
+            val ref = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/notes/$fromId")
 
             ref.addChildEventListener(object: ChildEventListener {
 
@@ -88,11 +90,12 @@ class NotesActivity: AppCompatActivity() {
 
         //Send Message to Firebase
         private fun performSendMessage(){
+            val player = mAuth.currentUser?.uid
             val text = edittext_chat_log.text.toString()
 
             val toId = "0"
             val fromId = "0"
-            val reference = FirebaseDatabase.getInstance().getReference("/notes/$fromId").push()
+            val reference = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/notes/$fromId").push()
 
             val chatMessage = ChatMessage(fromId,reference.key!!, text , toId)
             reference.setValue(chatMessage)

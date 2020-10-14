@@ -14,9 +14,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.database.FirebaseDatabase
+import com.xwray.groupie.Item
+import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_messages.*
 import kotlinx.android.synthetic.main.activity_phone_authentication.*
-
+import kotlinx.android.synthetic.main.user_answers.view.*
 
 
 class PhoneAuthentication : AppCompatActivity() {
@@ -45,8 +47,9 @@ class PhoneAuthentication : AppCompatActivity() {
                     val user = mAuth.currentUser?.uid
                     Log.d("userid", user.toString())
                     val userName = userName.text.toString()
-                    val ref = FirebaseDatabase.getInstance().getReference("/${user}").push()
-                    ref.setValue(userName)
+                    val ref = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${user}/playerSettings").push()
+                    val playerSettings = PlayerSettings(userName, "SP01")
+                    ref.setValue(playerSettings)
                     startActivity(Intent(this, MainActivity::class.java))
                 } else {
                     // If sign in fails, display a message to the user.
@@ -61,3 +64,7 @@ class PhoneAuthentication : AppCompatActivity() {
 
 
 }}
+
+class PlayerSettings(val name: String, val invoke: String){
+    constructor() : this("","")
+}

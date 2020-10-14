@@ -59,6 +59,7 @@ class  ContactActivity : AppCompatActivity() {
     val adapter = GroupAdapter<ViewHolder>()
     private fun fetchUsers(){
         val ref = FirebaseDatabase.getInstance().getReference("/user")
+
         Log.d("Ref", ref.toString());
         ref.addListenerForSingleValueEvent(object: ValueEventListener {
 

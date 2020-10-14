@@ -100,7 +100,8 @@ class  MainActivity : AppCompatActivity() {
 
     private fun listenForLatestMessages(){
         val fromId ="0"
-        val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId")
+        val user = mAuth.currentUser?.uid
+        val ref = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${user}/latest-messages/$fromId")
         ref.addChildEventListener(object: ChildEventListener{
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 val chatMessage = p0.getValue(ChatMessage::class.java) ?: return

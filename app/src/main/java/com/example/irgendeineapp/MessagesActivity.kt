@@ -21,6 +21,8 @@ import kotlinx.android.synthetic.main.user_answers.view.*
 
 class MessagesActivity: AppCompatActivity()  {
 
+    lateinit var mAuth: FirebaseAuth
+
     companion object{
         val TAG = "ChatLog"
     }
@@ -34,7 +36,7 @@ class MessagesActivity: AppCompatActivity()  {
         Log.d("STATUS", "Starting chatlog overview.")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages)
-
+        mAuth = FirebaseAuth.getInstance()
 
 
         toUser = intent.getParcelableExtra<User>(ContactActivity.USER_KEY)
@@ -68,7 +70,9 @@ override fun onSupportNavigateUp(): Boolean {
     private fun listenForMessages(){
         val fromId = "0"
         val toId = toUser?.user_id
-        val ref = FirebaseDatabase.getInstance().getReference("/test/$fromId/$toId")
+        val player = mAuth.currentUser?.uid
+        val ref = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/messages/$fromId/$toId")
+
 
         ref.addChildEventListener(object: ChildEventListener{
 
@@ -111,6 +115,7 @@ override fun onSupportNavigateUp(): Boolean {
 
         //val fromId = FirebaseAuth.getInstance().uid
         val user = intent.getParcelableExtra<User>(ContactActivity.USER_KEY)
+        val player = mAuth.currentUser?.uid
         val toId = user.user_id
         val fromId = "0"
         Log.d(TAG, "Attempt to send message1....")
@@ -118,8 +123,7 @@ override fun onSupportNavigateUp(): Boolean {
         Log.d(TAG, "Attempt to send message2....")
 
        // val reference = FirebaseDatabase.getInstance().getReference("/messages").push()
-        val reference = FirebaseDatabase.getInstance().getReference("/test/$fromId/$toId").push() /*<--THIS HAS TO GO*/
-
+        val reference = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/messages/$fromId/$toId").push()
         val chatMessage = ChatMessage(fromId, reference.key!!, text!!,toId)
         reference.setValue(chatMessage)
             .addOnSuccessListener {
@@ -131,14 +135,14 @@ override fun onSupportNavigateUp(): Boolean {
                 recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
             }
 
-        val latestMessageRef = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId/$toId")
+        val latestMessageRef = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/latest-messages/$fromId/$toId")
         latestMessageRef.setValue(chatMessage)
 
         provideUserAnswers()
     }
 
     private fun provideUserAnswers(){
-
+        val player = mAuth.currentUser?.uid
         //currently set as default. Subject to change later. Will become var from function parameter
         val answersRef = FirebaseDatabase.getInstance().getReference("/user-messages/0/2")
         answersRef.addListenerForSingleValueEvent(object: ValueEventListener{
@@ -147,7 +151,7 @@ override fun onSupportNavigateUp(): Boolean {
                     if(it.key == invoke){
                         val fromId = it.child("/from").value.toString()
                         val toId = it.child("/to").value.toString()
-                        val reference = FirebaseDatabase.getInstance().getReference("/test/$toId/$fromId").push()
+                        val reference = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/messages/$toId/$fromId").push()
                         invoke = it.child("/invoke").value.toString()
                         Log.d("NEW INVOKE", invoke)
                         val actualMessage = it.child("/text").value.toString()
@@ -157,7 +161,7 @@ override fun onSupportNavigateUp(): Boolean {
                                 Log.d(TAG, "Saved our chat message:${reference}")
                                 // edittext_chat_log.text.clear()
                                 recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
-                                val latestMessageRef = FirebaseDatabase.getInstance().getReference("/latest-messages/$toId/$fromId")
+                                val latestMessageRef = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/latest-messages/$toId/$fromId")
                                 latestMessageRef.setValue(chatMessage)
                             }
 
