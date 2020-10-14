@@ -44,7 +44,7 @@ class MessagesActivity: AppCompatActivity()  {
 
         listenForMessages()
          button.setOnClickListener {
-            performSendMessage()
+             this.performSendMessage()
         }
 
 
@@ -126,6 +126,7 @@ override fun onSupportNavigateUp(): Boolean {
 
                // edittext_chat_log.text.clear()
                 invoke = selectedAnswer?.invoke.toString()
+                Log.d("INVOKE",invoke)
                 answerAdapter.clear()
                 recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
             }
@@ -147,7 +148,8 @@ override fun onSupportNavigateUp(): Boolean {
                         val fromId = it.child("/from").value.toString()
                         val toId = it.child("/to").value.toString()
                         val reference = FirebaseDatabase.getInstance().getReference("/test/$toId/$fromId").push()
-                        invoke = it.key!!
+                        invoke = it.child("/invoke").value.toString()
+                        Log.d("NEW INVOKE", invoke)
                         val actualMessage = it.child("/text").value.toString()
                         val chatMessage = ChatMessage(fromId, it.key.toString(), actualMessage,toId)
                         reference.setValue(chatMessage)
@@ -162,6 +164,7 @@ override fun onSupportNavigateUp(): Boolean {
                     }else{
                         Log.d("keine antwort", it.key)
                     }
+                    provideAnswers()
                 }
             }
             override fun onCancelled(error: DatabaseError) {
@@ -183,9 +186,7 @@ override fun onSupportNavigateUp(): Boolean {
                     val actualMessage = it.child("/text")
                         val invoke = it.child("/invoke").value.toString()
                     actualMessage.children.forEach{
-                        Log.d("invoke", invoke)
                         answerAdapter.add(UserAnswer(it.value.toString(), invoke))
-
                     }
                 }}
 
@@ -226,9 +227,6 @@ class ChatFromItem(val text: String): Item<ViewHolder>(){
 class UserAnswer(val text: String, val invoke: String): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.answer.text = text
-        /*viewHolder.itemView.answer.setOnClickListener{
-            Log.d("BUTTON PRESSED",this.text)
-        }*/
     }
     override fun getLayout(): Int {
         return R.layout.user_answers
