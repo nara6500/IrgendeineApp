@@ -3,14 +3,13 @@ package com.example.irgendeineapp
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.Color.green
 import android.os.Build
 import android.os.Bundle
-import android.view.MotionEvent
-import android.view.View
+import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -22,6 +21,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class  MainActivity : AppCompatActivity() {
 
+    lateinit var mAuth: FirebaseAuth
 
     companion object{
         var currentUser: User? = null
@@ -34,6 +34,10 @@ class  MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        mAuth = FirebaseAuth.getInstance()
+        Log.d("Auth", mAuth.toString())
+
         recyclerview_latest_messages.adapter = adapter
 
 
@@ -69,6 +73,19 @@ class  MainActivity : AppCompatActivity() {
         adapter.add(UserItem2())
         chat_List.adapter = adapter*/
     }
+
+    override fun onStart() {
+        super.onStart()
+        val  currentUser = mAuth.currentUser
+
+
+        if (mAuth.currentUser == null) {
+            startActivity(Intent(this, PhoneAuthentication::class.java))
+        }else {
+            Toast.makeText(this, "Already Signed in :)", Toast.LENGTH_LONG).show()
+        }
+    }
+
 
     val adapter = GroupAdapter<ViewHolder>()
 
