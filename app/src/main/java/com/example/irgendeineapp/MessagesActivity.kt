@@ -1,23 +1,18 @@
 package com.example.irgendeineapp
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.android.synthetic.main.activity_messages.*
 import kotlinx.android.synthetic.main.my_message.view.*
-import kotlinx.android.synthetic.main.my_message.view.message_body
-import kotlinx.android.synthetic.main.their_message.view.*
-import kotlinx.android.synthetic.main.user_answers.*
 import kotlinx.android.synthetic.main.user_answers.view.*
+
+
 
 class MessagesActivity: AppCompatActivity()  {
 
@@ -30,15 +25,14 @@ class MessagesActivity: AppCompatActivity()  {
     val adapter = GroupAdapter<ViewHolder>()
     val answerAdapter = GroupAdapter<ViewHolder>()
     var toUser: User? = null
-    var invoke = "SP01"
+    var invoke = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d("STATUS", "Starting chatlog overview.")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages)
         mAuth = FirebaseAuth.getInstance()
 
-
+        getInvokeFromDatabase()
         toUser = intent.getParcelableExtra<User>(ContactActivity.USER_KEY)
         val toolbar = supportActionBar
         toolbar?.title = toUser?.user_name
@@ -78,7 +72,7 @@ override fun onSupportNavigateUp(): Boolean {
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 val chatMessage = p0.getValue(ChatMessage::class.java) ?: return
-                Log.d(TAG, chatMessage?.text)
+
 
                 if(chatMessage != null){
                     if(chatMessage.from == "0") {
@@ -118,9 +112,7 @@ override fun onSupportNavigateUp(): Boolean {
         val player = mAuth.currentUser?.uid
         val toId = user.user_id
         val fromId = "0"
-        Log.d(TAG, "Attempt to send message1....")
-        //  if (fromId == null ) return
-        Log.d(TAG, "Attempt to send message2....")
+
 
        // val reference = FirebaseDatabase.getInstance().getReference("/messages").push()
         val reference = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/messages/$fromId/$toId").push()
@@ -129,11 +121,12 @@ override fun onSupportNavigateUp(): Boolean {
             .addOnSuccessListener {
 
                // edittext_chat_log.text.clear()
-                val invoke = selectedAnswer?.invoke.toString()
-                val invokeRef = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/playerSettings")
-                invokeRef.child("invoke").setValue(invoke)
 
-                Log.d("INVOKE",invoke)
+
+                setInvokeInDatabase(selectedAnswer?.invoke.toString())
+
+
+
                 answerAdapter.clear()
                 recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
             }
@@ -142,6 +135,38 @@ override fun onSupportNavigateUp(): Boolean {
         latestMessageRef.setValue(chatMessage)
 
         provideUserAnswers()
+    }
+
+    private fun getInvokeFromDatabase(){
+        val player = mAuth.currentUser?.uid
+        val invokeRef =  FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/playerSettings/")
+          invokeRef.addListenerForSingleValueEvent(object : ValueEventListener {
+              override fun onDataChange(p0: DataSnapshot) {
+                  var invokeValue = p0.child("/invoke").value.toString()
+
+                  invoke = invokeValue
+
+
+              }
+
+              override fun onCancelled(error: DatabaseError) {
+              }
+          })
+
+
+
+
+
+
+
+    }
+
+
+    private fun setInvokeInDatabase(_invoke: String){
+        val player = mAuth.currentUser?.uid
+        val invokeRef = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/playerSettings")
+        invokeRef.child("/invoke").setValue(_invoke)
+        invoke = _invoke
     }
 
     private fun provideUserAnswers(){
@@ -155,13 +180,13 @@ override fun onSupportNavigateUp(): Boolean {
                         val fromId = it.child("/from").value.toString()
                         val toId = it.child("/to").value.toString()
                         val reference = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/messages/$toId/$fromId").push()
-                        invoke = it.child("/invoke").value.toString()
-                        Log.d("NEW INVOKE", invoke)
+
+                        setInvokeInDatabase(it.child("/invoke").value.toString())
+
                         val actualMessage = it.child("/text").value.toString()
                         val chatMessage = ChatMessage(fromId, it.key.toString(), actualMessage,toId)
                         reference.setValue(chatMessage)
                             .addOnSuccessListener {
-                                Log.d(TAG, "Saved our chat message:${reference}")
                                 // edittext_chat_log.text.clear()
                                 recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
                                 val latestMessageRef = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/latest-messages/$toId/$fromId")
@@ -169,7 +194,7 @@ override fun onSupportNavigateUp(): Boolean {
                             }
 
                     }else{
-                        Log.d("keine antwort", it.key)
+                      //  Log.d("keine antwort", it.key)
                     }
                     provideAnswers()
                 }
@@ -191,7 +216,9 @@ override fun onSupportNavigateUp(): Boolean {
                 p0.children.forEach {
                     if(it.key == invoke && it.child("/to").value == toUser?.user_id){
                         val actualMessage = it.child("/text")
-                        val invoke = it.child("/invoke").value.toString()
+
+                        setInvokeInDatabase(it.child("/invoke").value.toString())
+
                         actualMessage.children.forEach{
                         answerAdapter.add(UserAnswer(it.value.toString(), invoke))
                     }
@@ -212,6 +239,8 @@ override fun onSupportNavigateUp(): Boolean {
 
 
 }
+
+
 
 class ChatToItem(val text: String, val user:User): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {

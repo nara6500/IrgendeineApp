@@ -47,9 +47,12 @@ class PhoneAuthentication : AppCompatActivity() {
                     val user = mAuth.currentUser?.uid
                     Log.d("userid", user.toString())
                     val userName = userName.text.toString()
-                    val ref = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${user}/playerSettings").push()
+                    val ref = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${user}/playerSettings")
                     val playerSettings = PlayerSettings(userName, "SP01")
-                    ref.setValue(playerSettings)
+                  //  ref.setValue(playerSettings)
+
+                    ref.child("/invoke").setValue("SP01")
+                   ref.child("/userName").setValue(userName)
                     startActivity(Intent(this, MainActivity::class.java))
                 } else {
                     // If sign in fails, display a message to the user.
