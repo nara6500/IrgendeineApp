@@ -129,7 +129,10 @@ override fun onSupportNavigateUp(): Boolean {
             .addOnSuccessListener {
 
                // edittext_chat_log.text.clear()
-                invoke = selectedAnswer?.invoke.toString()
+                val invoke = selectedAnswer?.invoke.toString()
+                val invokeRef = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/playerSettings")
+                invokeRef.child("invoke").setValue(invoke)
+
                 Log.d("INVOKE",invoke)
                 answerAdapter.clear()
                 recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
@@ -187,9 +190,9 @@ override fun onSupportNavigateUp(): Boolean {
             override fun onDataChange(p0: DataSnapshot) {
                 p0.children.forEach {
                     if(it.key == invoke && it.child("/to").value == toUser?.user_id){
-                    val actualMessage = it.child("/text")
+                        val actualMessage = it.child("/text")
                         val invoke = it.child("/invoke").value.toString()
-                    actualMessage.children.forEach{
+                        actualMessage.children.forEach{
                         answerAdapter.add(UserAnswer(it.value.toString(), invoke))
                     }
                 }}
@@ -197,6 +200,7 @@ override fun onSupportNavigateUp(): Boolean {
                 answerAdapter.setOnItemClickListener { item, view ->
                     val answerItem = item as UserAnswer
                     selectedAnswer = answerItem
+
                 }
 
 
