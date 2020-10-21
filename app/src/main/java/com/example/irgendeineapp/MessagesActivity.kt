@@ -201,18 +201,21 @@ class MessagesActivity: AppCompatActivity()  {
 
                         //DELETE ALL INVOKES FROM CURRENT INVOKE ENTRY
                         clearInvokesFromDatabase()
-
+                        invoke.clear()
                         //println("CLEARED CONTENTS FROM INVOKE LIST.")
                         //WRITE NEW ENTRIES TO INVOKE
 
+                        for(x in 0 until it.child("/invoke").childrenCount) {
+                            invoke.add(it.child("/invoke").child("/$x").value.toString()!!)
+                        }
+                        println("INVOKE IS NOW SET TO " + invoke + " AFTER LOOPING.")
                         for( x in 0 until invoke.size) {
                             //setInvokeInDatabase(it.child("/invoke").value.toString())
                             //setInvokeInDatabase(invoke[x]) TODO: new Invokes
-                            for(x in 0 until it.child("/invoke").childrenCount) {
-                                setInvokeInDatabase(it.child("/invoke").child("/$x").value.toString()!!)
-                            }
-                            invoke.add(it.child("/invoke").child("/$x").value.toString()!!)
-                            println("INVOKE IS NOW SET TO " + invoke + " AFTER LOOPING.")
+                            setInvokeInDatabase(it.child("/invoke").child("/$x").value.toString()!!)
+
+
+
                         }
 
                         val actualMessage = it.child("/text").value.toString()
