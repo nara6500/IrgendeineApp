@@ -36,6 +36,7 @@ class PhoneAuthentication : AppCompatActivity() {
                 view: View? -> progress.visibility = View.VISIBLE
             verify ()
         }
+
     }
 
     private fun verify () {

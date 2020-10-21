@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
+    android:background="@android:color/black"
     tools:context=".PhoneAuthentication">
 
 
@@ -20,11 +20,14 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="100dp"
         android:layout_marginEnd="20dp"
+        android:backgroundTint="@android:color/white"
+        android:hint="@string/dein_name"
         android:inputType="text"
-        android:text="@string/dein_name"
         android:textAlignment="center"
         android:textColor="@android:color/white"
-        android:textColorHint="@color/colorAccent"
+        android:textColorHighlight="@android:color/white"
+        android:textColorHint="@android:color/white"
+        android:textColorLink="@android:color/white"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
