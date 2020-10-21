@@ -120,10 +120,19 @@ class MessagesActivity: AppCompatActivity()  {
         val chatMessage = ChatMessage(fromId, reference.key!!, text!!,toId)
         reference.setValue(chatMessage)
             .addOnSuccessListener {
+                invoke.clear()
+
+
+               // invoke.add(selectedAnswer?.invoke.toString())
 
                 //setInvokeInDatabase(selectedAnswer?.invoke.toString())
                 //DELETE ALL INVOKES FROM CURRENT INVOKE ENTRY
                 clearInvokesFromDatabase()
+
+                for(x in 0 until selectedAnswer?.invoke!!.size ){
+                    invoke.add(selectedAnswer?.invoke!![x])
+                    println("selectedAnswerinvoke" + selectedAnswer?.invoke!![x])
+                }
 
                 //WRITE NEW ENTRIES TO INVOKE
                 println("INVOKE SIZE IS " + invoke.size + ". STARTING TO WRITE NOW.")
@@ -191,13 +200,13 @@ class MessagesActivity: AppCompatActivity()  {
                         val reference = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/messages/$toId/$fromId").push()
 
                         //DELETE ALL INVOKES FROM CURRENT INVOKE ENTRY
-                        clearInvokesFromDatabase()
+                       // clearInvokesFromDatabase()
 
                         println("CLEARED CONTENTS FROM INVOKE LIST.")
                         //WRITE NEW ENTRIES TO INVOKE
                         for( x in 0 until invoke.size) {
                             //setInvokeInDatabase(it.child("/invoke").value.toString())
-                            setInvokeInDatabase(invoke[x])
+                          //  setInvokeInDatabase(invoke[x]) TODO: new Invokes
                         }
 
                         val actualMessage = it.child("/text").value.toString()
@@ -235,16 +244,21 @@ class MessagesActivity: AppCompatActivity()  {
                 p0.children.forEach {
                     if(invoke.contains(it.key) && it.child("/to").value == toUser?.user_id){
                         val actualMessage = it.child("/text")
-
-                        clearInvokesFromDatabase()
+                        val invokeRef = it.child("/invoke")
+                        //clearInvokesFromDatabase()
                         println("CLEARING. SIZE SET TO: " + invoke.size)
                         println(it.child("/invoke").childrenCount)
-                        for(x in 0 until it.child("/invoke").childrenCount)
-                            setInvokeInDatabase(it.child("/invoke").child("/$x").value.toString())
+                      //  for(x in 0 until it.child("/invoke").childrenCount)
+                       //     setInvokeInDatabase(it.child("/invoke").child("/$x").value.toString())
                         println("FINAL ENTRY FOR FIREBASE IS: " + it.child("/invoke").value.toString())
 
                         actualMessage.children.forEach{
-                            answerAdapter.add(UserAnswer(it.value.toString(), invoke))
+                            val _invoke = mutableListOf<String>()
+                            for(x in 0 until invokeRef.childrenCount){
+                                _invoke.add(invokeRef.child("/$x").value.toString())
+                                println("Was ist da drin?"+ it.child("/invoke").child("/$x").value.toString())
+                            }
+                            answerAdapter.add(UserAnswer(it.value.toString(), _invoke))
                         }
                     }}
 
@@ -252,6 +266,7 @@ class MessagesActivity: AppCompatActivity()  {
                     val answerItem = item as UserAnswer
                     selectedAnswer = answerItem
                     view.setBackgroundColor(Color.parseColor("#404040"))
+                    println("klick"+ selectedAnswer?.invoke.toString())
                 }
 
 
