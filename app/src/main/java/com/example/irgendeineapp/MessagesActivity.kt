@@ -34,9 +34,9 @@ class MessagesActivity: AppCompatActivity()  {
         mAuth = FirebaseAuth.getInstance()
 
         invoke.clear() //CLEAR LOCAL LIST OF INVOKE, JUST TO BE SURE
-        println("INVOKE LIST CLEARED.")
+        //println("INVOKE LIST CLEARED.")
         getInvokeFromDatabase() //GET CURRENTLY NEEDED INVOKE FROM FIREBASE USER PROFILE
-        println("INVOKE LIST AT START IS " + invoke)
+        //println("INVOKE LIST AT START IS " + invoke)
 
         toUser = intent.getParcelableExtra<User>(ContactActivity.USER_KEY)
         val toolbar = supportActionBar
@@ -54,20 +54,16 @@ class MessagesActivity: AppCompatActivity()  {
         recyclerview_chat_log.adapter = adapter
     }
 
-
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
     }
-
-
 
     private fun listenForMessages(){
         val fromId = "0"
         val toId = toUser?.user_id
         val player = mAuth.currentUser?.uid
         val ref = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/messages/$fromId/$toId")
-
 
         ref.addChildEventListener(object: ChildEventListener{
 
@@ -114,16 +110,14 @@ class MessagesActivity: AppCompatActivity()  {
         val toId = user.user_id
         val fromId = "0"
 
-
         // val reference = FirebaseDatabase.getInstance().getReference("/messages").push()
         val reference = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/messages/$fromId/$toId").push()
         val chatMessage = ChatMessage(fromId, reference.key!!, text!!,toId)
-        reference.setValue(chatMessage)
+        reference.setValue(chatMessage!!)
             .addOnSuccessListener {
                 invoke.clear()
 
-
-               // invoke.add(selectedAnswer?.invoke.toString())
+                // invoke.add(selectedAnswer?.invoke.toString())
 
                 //setInvokeInDatabase(selectedAnswer?.invoke.toString())
                 //DELETE ALL INVOKES FROM CURRENT INVOKE ENTRY
@@ -131,11 +125,11 @@ class MessagesActivity: AppCompatActivity()  {
 
                 for(x in 0 until selectedAnswer?.invoke!!.size ){
                     invoke.add(selectedAnswer?.invoke!![x])
-                    println("selectedAnswerinvoke" + selectedAnswer?.invoke!![x])
+                    //println("selectedAnswerinvoke" + selectedAnswer?.invoke!![x])
                 }
 
                 //WRITE NEW ENTRIES TO INVOKE
-                println("INVOKE SIZE IS " + invoke.size + ". STARTING TO WRITE NOW.")
+                //println("INVOKE SIZE IS " + invoke.size + ". STARTING TO WRITE NOW.")
                 for( x in 0 until invoke.size) {
                     //setInvokeInDatabase(it.child("/invoke").value.toString())
                     setInvokeInDatabase(invoke[x])
@@ -148,8 +142,11 @@ class MessagesActivity: AppCompatActivity()  {
         val latestMessageRef = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/latest-messages/$fromId/$toId")
         latestMessageRef.setValue(chatMessage)
 
-        println("STARTING provideUserAnswers(). PARAMETERS ARE: " + invoke + " AND: " + toId)
-        provideUserAnswers(invoke, toId)
+        //println("STARTING provideUserAnswers(). PARAMETERS ARE: " + invoke + " AND: " + toId)
+        for (x in 0 until 9){
+            //provideUserAnswers(invoke, toId)
+            provideUserAnswers(invoke, "$x")
+        }
     }
 
     private fun getInvokeFromDatabase(){
@@ -168,7 +165,6 @@ class MessagesActivity: AppCompatActivity()  {
             override fun onCancelled(error: DatabaseError) {
             }
         })
-
     }
 
     private fun setInvokeInDatabase(_invoke: String){
@@ -176,7 +172,7 @@ class MessagesActivity: AppCompatActivity()  {
         val invokeRef = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/playerSettings")
         val invokeAdd = invokeRef.child("/invoke").push()
         invokeAdd.setValue(_invoke)
-        println("SETTING INVOKES IN FIREBASE NOW TO: " + _invoke)
+        //println("SETTING INVOKES IN FIREBASE NOW TO: " + _invoke)
         //invokeRef.child("/invoke").setValue(_invoke)
         //invoke = _invoke
     }
@@ -188,7 +184,7 @@ class MessagesActivity: AppCompatActivity()  {
     }
 
     private fun provideUserAnswers(singleInvoke: MutableList<String>, receiverId: String){
-        println("ENTERING provideUserAnswers() NOW.")
+        //println("ENTERING provideUserAnswers() NOW.")
         val player = mAuth.currentUser?.uid
         val answersRef = FirebaseDatabase.getInstance().getReference("/user-messages/0/$receiverId")
         answersRef.addListenerForSingleValueEvent(object: ValueEventListener{
@@ -208,13 +204,11 @@ class MessagesActivity: AppCompatActivity()  {
                         for(x in 0 until it.child("/invoke").childrenCount) {
                             invoke.add(it.child("/invoke").child("/$x").value.toString()!!)
                         }
-                        println("INVOKE IS NOW SET TO " + invoke + " AFTER LOOPING.")
+                        //println("INVOKE IS NOW SET TO " + invoke + " AFTER LOOPING.")
                         for( x in 0 until invoke.size) {
                             //setInvokeInDatabase(it.child("/invoke").value.toString())
                             //setInvokeInDatabase(invoke[x]) TODO: new Invokes
                             setInvokeInDatabase(it.child("/invoke").child("/$x").value.toString()!!)
-
-
 
                         }
 
@@ -238,15 +232,13 @@ class MessagesActivity: AppCompatActivity()  {
             override fun onCancelled(error: DatabaseError) {
             }
         })
-
-
     }
 
     var selectedAnswer :UserAnswer? = null
 
     //read available answers from Firebase
     private fun provideAnswers(){
-        println("ENTERING provideAnswers() NOW.")
+        //println("ENTERING provideAnswers() NOW.")
         val answersRef = FirebaseDatabase.getInstance().getReference("/user-messages/0/0")
         answersRef.addListenerForSingleValueEvent(object: ValueEventListener{
             override fun onDataChange(p0: DataSnapshot) {
@@ -255,17 +247,17 @@ class MessagesActivity: AppCompatActivity()  {
                         val actualMessage = it.child("/text")
                         val invokeRef = it.child("/invoke")
                         //clearInvokesFromDatabase()
-                        println("CLEARING. SIZE SET TO: " + invoke.size)
-                        println(it.child("/invoke").childrenCount)
-                      //  for(x in 0 until it.child("/invoke").childrenCount)
-                       //     setInvokeInDatabase(it.child("/invoke").child("/$x").value.toString())
-                        println("FINAL ENTRY FOR FIREBASE IS: " + it.child("/invoke").value.toString())
+                        //println("CLEARING. SIZE SET TO: " + invoke.size)
+                        //println(it.child("/invoke").childrenCount)
+                        //for(x in 0 until it.child("/invoke").childrenCount)
+                        //setInvokeInDatabase(it.child("/invoke").child("/$x").value.toString())
+                        //println("FINAL ENTRY FOR FIREBASE IS: " + it.child("/invoke").value.toString())
 
                         actualMessage.children.forEach{
                             val _invoke = mutableListOf<String>()
                             for(x in 0 until invokeRef.childrenCount){
                                 _invoke.add(invokeRef.child("/$x").value.toString())
-                                println("Was ist da drin?"+ it.child("/invoke").child("/$x").value.toString())
+                                //println("Was ist da drin?"+ it.child("/invoke").child("/$x").value.toString())
                             }
                             answerAdapter.add(UserAnswer(it.value.toString(), _invoke))
                         }
@@ -275,20 +267,14 @@ class MessagesActivity: AppCompatActivity()  {
                     val answerItem = item as UserAnswer
                     selectedAnswer = answerItem
                     view.setBackgroundColor(Color.parseColor("#404040"))
-                    println("klick"+ selectedAnswer?.invoke.toString())
+                    //println("klick"+ selectedAnswer?.invoke.toString())
                 }
-
-
             }
             override fun onCancelled(error: DatabaseError) {
             }
         })
     }
-
-
 }
-
-
 
 class ChatToItem(val text: String, val user:User): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
@@ -298,7 +284,6 @@ class ChatToItem(val text: String, val user:User): Item<ViewHolder>(){
         return R.layout.my_message
     }
 }
-
 
 class ChatFromItem(val text: String): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
