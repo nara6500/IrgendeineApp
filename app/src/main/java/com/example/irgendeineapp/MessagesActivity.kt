@@ -26,6 +26,7 @@ class MessagesActivity: AppCompatActivity()  {
     val adapter = GroupAdapter<ViewHolder>()
     val answerAdapter = GroupAdapter<ViewHolder>()
     var toUser: User? = null
+    var toId: String? =""
     val invoke = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +40,7 @@ class MessagesActivity: AppCompatActivity()  {
         //println("INVOKE LIST AT START IS " + invoke)
 
         toUser = intent.getParcelableExtra<User>(ContactActivity.USER_KEY)
+        toId = toUser?.user_id
         val toolbar = supportActionBar
         toolbar?.title = toUser?.user_name
         toolbar?.setDisplayHomeAsUpEnabled(true)
@@ -48,7 +50,7 @@ class MessagesActivity: AppCompatActivity()  {
             this.performSendMessage()
         }
 
-        provideAnswers()
+        provideUserAnswers()
 
         recyclerview_answers.adapter = answerAdapter
         recyclerview_chat_log.adapter = adapter
@@ -61,7 +63,7 @@ class MessagesActivity: AppCompatActivity()  {
 
     private fun listenForMessages(){
         val fromId = "0"
-        val toId = toUser?.user_id
+
         val player = mAuth.currentUser?.uid
         val ref = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/messages/$fromId/$toId")
 
@@ -103,16 +105,12 @@ class MessagesActivity: AppCompatActivity()  {
     //Send Message to Firebase
     private fun performSendMessage(){
         val text = selectedAnswer?.text
-
-        //val fromId = FirebaseAuth.getInstance().uid
-        val user = intent.getParcelableExtra<User>(ContactActivity.USER_KEY)
         val player = mAuth.currentUser?.uid
-        val toId = user.user_id
         val fromId = "0"
 
         // val reference = FirebaseDatabase.getInstance().getReference("/messages").push()
         val reference = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/messages/$fromId/$toId").push()
-        val chatMessage = ChatMessage(fromId, reference.key!!, text!!,toId)
+        val chatMessage = ChatMessage(fromId, reference.key!!, text!!,toId!!)
         reference.setValue(chatMessage!!)
             .addOnSuccessListener {
                 invoke.clear()
@@ -143,10 +141,10 @@ class MessagesActivity: AppCompatActivity()  {
         latestMessageRef.setValue(chatMessage)
 
         //println("STARTING provideUserAnswers(). PARAMETERS ARE: " + invoke + " AND: " + toId)
-        for (x in 0 until 9){
+
             //provideUserAnswers(invoke, toId)
-            provideUserAnswers(invoke, "$x")
-        }
+            provideUserAnswers()
+
     }
 
     private fun getInvokeFromDatabase(){
@@ -183,14 +181,14 @@ class MessagesActivity: AppCompatActivity()  {
         invokeRef.removeValue()
     }
 
-    private fun provideUserAnswers(singleInvoke: MutableList<String>, receiverId: String){
+    private fun provideUserAnswers(){
         //println("ENTERING provideUserAnswers() NOW.")
         val player = mAuth.currentUser?.uid
-        val answersRef = FirebaseDatabase.getInstance().getReference("/user-messages/0/$receiverId")
+        val answersRef = FirebaseDatabase.getInstance().getReference("/user-messages/0/$toId")
         answersRef.addListenerForSingleValueEvent(object: ValueEventListener{
             override fun onDataChange(p0: DataSnapshot) {
                 p0.children.forEach {
-                    if(singleInvoke.contains(it.key)){
+                    if(invoke.contains(it.key)){
                         val fromId = it.child("/from").value.toString()
                         val toId = it.child("/to").value.toString()
                         val reference = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/messages/$toId/$fromId").push()
