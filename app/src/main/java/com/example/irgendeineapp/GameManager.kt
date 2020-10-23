@@ -71,9 +71,25 @@ class GameManager {
         })
     }
 
-     fun clearInvokesFromDatabase(){
+    fun clearInvokesFromDatabase(invokeToDelete:String) {
         val player = mAuth.currentUser?.uid
-        val invokeRef = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/playerSettings/invoke")
-        invokeRef.removeValue()
+        /*val invokeRef = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/playerSettings/invoke")
+         invokeRef.removeValue()*/
+        val deleteRef = FirebaseDatabase.getInstance()
+            .getReference("/ownPlaySettings/${player}/playerSettings/invoke")
+        deleteRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(p0: DataSnapshot) {
+                p0.children.forEach {
+                    if (it.value == invokeToDelete) {
+                        var deleteKey = it.key!!
+                        deleteRef.child("/$deleteKey").removeValue()
+                    }
+                }
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+            }
+        })
     }
+
 }

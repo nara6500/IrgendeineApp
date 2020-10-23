@@ -37,9 +37,7 @@ class MessagesActivity: AppCompatActivity()  {
         gameManager = GameManager()
         gameManager?.getPlayerName()
         gameManager?.invoke?.clear() //CLEAR LOCAL LIST OF INVOKE, JUST TO BE SURE
-        //println("INVOKE LIST CLEARED.")
         gameManager?.getInvokeFromDatabase() //GET CURRENTLY NEEDED INVOKE FROM FIREBASE USER PROFILE
-        //println("INVOKE LIST AT START IS " + invoke)
 
         toUser = intent.getParcelableExtra<User>(ContactActivity.USER_KEY)
         toId = toUser?.user_id
@@ -115,13 +113,16 @@ class MessagesActivity: AppCompatActivity()  {
         val chatMessage = ChatMessage(fromId, reference.key!!, text!!,toId!!)
         reference.setValue(chatMessage!!)
             .addOnSuccessListener {
+                //gameManager?.clearInvokesFromDatabase("")
+                for(x in 0 until selectedAnswer?.invoke!!.size ){
+                    gameManager?.clearInvokesFromDatabase(gameManager?.invoke!![x])
+                }
                 gameManager?.invoke?.clear()
 
                 // invoke.add(selectedAnswer?.invoke.toString())
 
                 //setInvokeInDatabase(selectedAnswer?.invoke.toString())
-                //DELETE ALL INVOKES FROM CURRENT INVOKE ENTRY
-                gameManager?.clearInvokesFromDatabase()
+                //gameManager?.clearInvokesFromDatabase("")
 
                 for(x in 0 until selectedAnswer?.invoke!!.size ){
                     gameManager?.invoke?.add(selectedAnswer?.invoke!![x])
@@ -129,7 +130,6 @@ class MessagesActivity: AppCompatActivity()  {
                 }
 
                 //WRITE NEW ENTRIES TO INVOKE
-                //println("INVOKE SIZE IS " + invoke.size + ". STARTING TO WRITE NOW.")
                 for( x in 0 until gameManager?.invoke?.size!!) {
                     //setInvokeInDatabase(it.child("/invoke").value.toString())
                     gameManager?.setInvokeInDatabase(gameManager?.invoke!![x])
@@ -168,7 +168,7 @@ class MessagesActivity: AppCompatActivity()  {
                         val reference = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/messages/$toId/$fromId").push()
 
                         //DELETE ALL INVOKES FROM CURRENT INVOKE ENTRY
-                        gameManager?.clearInvokesFromDatabase()
+                        gameManager?.clearInvokesFromDatabase(it.key!!)
                         gameManager?.invoke?.clear()
                         //println("CLEARED CONTENTS FROM INVOKE LIST.")
                         //WRITE NEW ENTRIES TO INVOKE
@@ -275,3 +275,4 @@ class UserAnswer(val text: String, val invoke: MutableList<String>): Item<ViewHo
         return R.layout.user_answers
     }
 }
+
