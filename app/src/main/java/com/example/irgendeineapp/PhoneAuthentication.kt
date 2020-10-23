@@ -51,7 +51,7 @@ class PhoneAuthentication : AppCompatActivity() {
                     val ref = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${user}/playerSettings")
 
                     val invoke = mutableListOf<String>()
-                    invoke.add("SP01")
+                    invoke.add("AN01")
 
                     ref.child("/invoke").setValue(invoke)
                    ref.child("/userName").setValue(userName)
