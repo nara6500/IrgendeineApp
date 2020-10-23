@@ -232,7 +232,8 @@ class MessagesActivity: AppCompatActivity()  {
                                 _invoke.add(invokeRef.child("/$x").value.toString())
                                 //println("Was ist da drin?"+ it.child("/invoke").child("/$x").value.toString())
                             }
-                            answerAdapter.add(UserAnswer(it.value.toString(), _invoke))
+                            answerAdapter.add(UserAnswer(gameManager?.changePlayerNameInText(it.value.toString())!!, _invoke))
+
                         }
                     }}
 
