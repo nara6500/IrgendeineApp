@@ -13,6 +13,7 @@ import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_messages.*
 import kotlinx.android.synthetic.main.my_message.view.*
 import kotlinx.android.synthetic.main.user_answers.view.*
+import kotlinx.coroutines.*
 
 
 
@@ -196,19 +197,34 @@ class MessagesActivity: AppCompatActivity()  {
 
                         val actualMessage = gameManager?.changePlayerNameInText(it.child("/text").value.toString())
                         val chatMessage = ChatMessage(fromId, it.key.toString(), actualMessage!!,toId)
-                        reference.setValue(chatMessage)
+
+                        GlobalScope.launch(){
+                            delay(2000)
+                            reference.setValue(chatMessage)
                             .addOnSuccessListener {
                                 // edittext_chat_log.text.clear()
                                 recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
 
                                 val latestMessageRef = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/latest-messages/$toId/$fromId")
                                 latestMessageRef.setValue(chatMessage)
+
+                                provideAnswers()
                             }
+                        }
+
+                        /*reference.setValue(chatMessage)
+                            .addOnSuccessListener {
+                                // edittext_chat_log.text.clear()
+                                recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
+
+                                val latestMessageRef = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/latest-messages/$toId/$fromId")
+                                latestMessageRef.setValue(chatMessage)
+                            }*/
 
                     }else{
                         //  Log.d("keine antwort", it.key)
                     }
-                    provideAnswers()
+                    //provideAnswers()
                 }
             }
             override fun onCancelled(error: DatabaseError) {
