@@ -35,6 +35,7 @@ class MessagesActivity: AppCompatActivity()  {
         mAuth = FirebaseAuth.getInstance()
 
         gameManager = GameManager()
+        gameManager?.getPlayerName()
         gameManager?.invoke?.clear() //CLEAR LOCAL LIST OF INVOKE, JUST TO BE SURE
         //println("INVOKE LIST CLEARED.")
         gameManager?.getInvokeFromDatabase() //GET CURRENTLY NEEDED INVOKE FROM FIREBASE USER PROFILE
@@ -183,8 +184,9 @@ class MessagesActivity: AppCompatActivity()  {
 
                         }
 
-                        val actualMessage = it.child("/text").value.toString()
-                        val chatMessage = ChatMessage(fromId, it.key.toString(), actualMessage,toId)
+
+                        val actualMessage = gameManager?.changePlayerNameInText(it.child("/text").value.toString())
+                        val chatMessage = ChatMessage(fromId, it.key.toString(), actualMessage!!,toId)
                         reference.setValue(chatMessage)
                             .addOnSuccessListener {
                                 // edittext_chat_log.text.clear()
