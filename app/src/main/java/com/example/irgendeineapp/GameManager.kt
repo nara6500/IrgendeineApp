@@ -14,7 +14,7 @@ class GameManager {
 
     val invoke = mutableListOf<String>()
     var playerName: String = ""
-
+    var userId : String = ""
     constructor(){
         mAuth = FirebaseAuth.getInstance()
 
@@ -26,31 +26,45 @@ class GameManager {
         return text.replace("SPIELERNAME".toRegex(), "$playerName")
     }
 
-    fun checkifAction(invoke : String){
-        if(invoke == "AN05"){
-            // Spieler soll auf Alex Chat klicken, danach Nachricht SP05
+    fun checkIfAction(_singleInvoke : String){
+
+        // Spieler soll auf Alex Chat klicken, danach Nachricht SP05
+        // in getInvoke augerufen??? -> funktioniert aber
+
+        if(_singleInvoke == "AN05_wait"){
+            println(_singleInvoke)
+            println("userid"+userId)
+            if(this.userId == "1"){
+                for(x in 0 until invoke.size){
+                    if(invoke[x].contains(_singleInvoke)){
+                        clearInvokesFromDatabase(invoke[x])
+                        setInvokeInDatabase("SP05")
+                    }
+                }
+            }
+
         }
 
         //AN09, AN10, AN11, AN17, AN18, AN21, AN29, BE14, JA08, JA09, JA11, JA12, JA13, LI10, LI11, LI12, LI16, LU11, LU12, LU13, MA08, SP60, SP97, SP107, TI17
         // laufen ins leere, bis neue informationen da sind  (muss das abgefangen werden?)
 
-        if(invoke == "BE04"){
+        if(_singleInvoke == "BE04"){
             // Der Spieler muss herausfinden, was Alex an dem Abend anhatte, bevor die Geschichte weiter geht.
             // Er kann entweder die Infos an Benji weitergeben (SP??, SP??) oder aber er sagt, er weiß nicht was Alex anhatte. Dann sagt Benji ihm, dass er ihm erst helfen kann,
             // wenn er die Infos hat und das Gespräch geht erst weiter, wenn der Spieler mit den anderen Charakteren geredet hat und zumindest eine der Infos rausgefunden hat.
         }
 
-        if(invoke == "BE13"){
+        if(_singleInvoke == "BE13"){
            // Der Spieler hat erstmal alles von Benji erfahren und die Geschichte geht in einem anderen Chat weiter.
             // Benji schreibt nur noch eine Nachricht um nett zu sein (Wenn das Probleme macht, kann man die theoretisch auch weglassen,
             // die ist nur schmückend und nicht relevant für die Geschichte).
 
         }
-        if(invoke == "LU"){
+        if(_singleInvoke == "LU"){
             // Luis gibt dem Spieler eine neue Nummer (Marlene). Ein neuer Chat wird hinzugefügt und der Spieler kann Marlene schreiben.
             // Da könnte als Invoke auch SP99 stehen, das ist die Nachricht, die der Spieler Marlene schicken kann.
         }
-        if(invoke == "SP41"){
+        if(_singleInvoke == "SP41"){
            // Der Spieler bekommt die Nummern von Timo und Luis. Beide Chats müssen hinzugefügt werden, bevor der Spieler ihnen schrieben kann.
             // (Nachricht an Timo: SP47, Nachricht an Luis: SP70)
         }
@@ -80,6 +94,7 @@ class GameManager {
         val invokeRef = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/playerSettings")
         val invokeAdd = invokeRef.child("/invoke").push()
         invokeAdd.setValue(_invoke)
+
         //println("SETTING INVOKES IN FIREBASE NOW TO: " + _invoke)
         //invokeRef.child("/invoke").setValue(_invoke)
         //invoke = _invoke
@@ -95,6 +110,7 @@ class GameManager {
                     val invokeValue = it.value.toString()
                     //invoke = invokeValue
                     invoke.add(invokeValue)
+                    checkIfAction(invokeValue)
                     println("erster invoke:" + invoke.toString())
                 }
             }

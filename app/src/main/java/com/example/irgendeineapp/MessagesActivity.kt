@@ -3,6 +3,7 @@ package com.example.irgendeineapp
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -41,13 +42,20 @@ class MessagesActivity: AppCompatActivity()  {
 
         toUser = intent.getParcelableExtra<User>(ContactActivity.USER_KEY)
         toId = toUser?.user_id
+        gameManager?.userId = toId!!
         val toolbar = supportActionBar
         toolbar?.title = toUser?.user_name
         toolbar?.setDisplayHomeAsUpEnabled(true)
 
         listenForMessages()
         button.setOnClickListener {
-            this.performSendMessage()
+            if (selectedAnswer!=null){
+                this.performSendMessage()
+            }else{
+                Toast.makeText(baseContext, "Was soll ich senden?",
+                    Toast.LENGTH_SHORT).show()
+            }
+
         }
 
         provideUserAnswers()
@@ -136,6 +144,7 @@ class MessagesActivity: AppCompatActivity()  {
                 }
 
                 answerAdapter.clear()
+                selectedAnswer = null
                 recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
             }
 
