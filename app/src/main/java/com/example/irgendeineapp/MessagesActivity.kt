@@ -27,16 +27,17 @@ class MessagesActivity: AppCompatActivity()  {
     val answerAdapter = GroupAdapter<ViewHolder>()
     var toUser: User? = null
     var toId: String? =""
-    val invoke = mutableListOf<String>()
+    var gameManager: GameManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages)
         mAuth = FirebaseAuth.getInstance()
 
-        invoke.clear() //CLEAR LOCAL LIST OF INVOKE, JUST TO BE SURE
+        gameManager = GameManager()
+        gameManager?.invoke?.clear() //CLEAR LOCAL LIST OF INVOKE, JUST TO BE SURE
         //println("INVOKE LIST CLEARED.")
-        getInvokeFromDatabase() //GET CURRENTLY NEEDED INVOKE FROM FIREBASE USER PROFILE
+        gameManager?.getInvokeFromDatabase() //GET CURRENTLY NEEDED INVOKE FROM FIREBASE USER PROFILE
         //println("INVOKE LIST AT START IS " + invoke)
 
         toUser = intent.getParcelableExtra<User>(ContactActivity.USER_KEY)
@@ -113,24 +114,24 @@ class MessagesActivity: AppCompatActivity()  {
         val chatMessage = ChatMessage(fromId, reference.key!!, text!!,toId!!)
         reference.setValue(chatMessage!!)
             .addOnSuccessListener {
-                invoke.clear()
+                gameManager?.invoke?.clear()
 
                 // invoke.add(selectedAnswer?.invoke.toString())
 
                 //setInvokeInDatabase(selectedAnswer?.invoke.toString())
                 //DELETE ALL INVOKES FROM CURRENT INVOKE ENTRY
-                clearInvokesFromDatabase()
+                gameManager?.clearInvokesFromDatabase()
 
                 for(x in 0 until selectedAnswer?.invoke!!.size ){
-                    invoke.add(selectedAnswer?.invoke!![x])
+                    gameManager?.invoke?.add(selectedAnswer?.invoke!![x])
                     //println("selectedAnswerinvoke" + selectedAnswer?.invoke!![x])
                 }
 
                 //WRITE NEW ENTRIES TO INVOKE
                 //println("INVOKE SIZE IS " + invoke.size + ". STARTING TO WRITE NOW.")
-                for( x in 0 until invoke.size) {
+                for( x in 0 until gameManager?.invoke?.size!!) {
                     //setInvokeInDatabase(it.child("/invoke").value.toString())
-                    setInvokeInDatabase(invoke[x])
+                    gameManager?.setInvokeInDatabase(gameManager?.invoke!![x])
                 }
 
                 answerAdapter.clear()
@@ -147,39 +148,11 @@ class MessagesActivity: AppCompatActivity()  {
 
     }
 
-    private fun getInvokeFromDatabase(){
-        val player = mAuth.currentUser?.uid
-        val invokeRef =  FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/playerSettings/invoke")
-        invokeRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(p0: DataSnapshot) {
-                //loop over all children in path "/invoke"
-                p0.children.forEach{
-                    val invokeValue = it.value.toString()
-                    //invoke = invokeValue
-                    invoke.add(invokeValue)
-                }
-            }
 
-            override fun onCancelled(error: DatabaseError) {
-            }
-        })
-    }
 
-    private fun setInvokeInDatabase(_invoke: String){
-        val player = mAuth.currentUser?.uid
-        val invokeRef = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/playerSettings")
-        val invokeAdd = invokeRef.child("/invoke").push()
-        invokeAdd.setValue(_invoke)
-        //println("SETTING INVOKES IN FIREBASE NOW TO: " + _invoke)
-        //invokeRef.child("/invoke").setValue(_invoke)
-        //invoke = _invoke
-    }
 
-    private fun clearInvokesFromDatabase(){
-        val player = mAuth.currentUser?.uid
-        val invokeRef = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/playerSettings/invoke")
-        invokeRef.removeValue()
-    }
+
+
 
     private fun provideUserAnswers(){
         //println("ENTERING provideUserAnswers() NOW.")
@@ -188,25 +161,25 @@ class MessagesActivity: AppCompatActivity()  {
         answersRef.addListenerForSingleValueEvent(object: ValueEventListener{
             override fun onDataChange(p0: DataSnapshot) {
                 p0.children.forEach {
-                    if(invoke.contains(it.key)){
+                    if(gameManager?.invoke!!.contains(it.key)){
                         val fromId = it.child("/from").value.toString()
                         val toId = it.child("/to").value.toString()
                         val reference = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/messages/$toId/$fromId").push()
 
                         //DELETE ALL INVOKES FROM CURRENT INVOKE ENTRY
-                        clearInvokesFromDatabase()
-                        invoke.clear()
+                        gameManager?.clearInvokesFromDatabase()
+                        gameManager?.invoke?.clear()
                         //println("CLEARED CONTENTS FROM INVOKE LIST.")
                         //WRITE NEW ENTRIES TO INVOKE
 
                         for(x in 0 until it.child("/invoke").childrenCount) {
-                            invoke.add(it.child("/invoke").child("/$x").value.toString()!!)
+                            gameManager?.invoke?.add(it.child("/invoke").child("/$x").value.toString()!!)
                         }
                         //println("INVOKE IS NOW SET TO " + invoke + " AFTER LOOPING.")
-                        for( x in 0 until invoke.size) {
+                        for( x in 0 until gameManager?.invoke!!.size) {
                             //setInvokeInDatabase(it.child("/invoke").value.toString())
                             //setInvokeInDatabase(invoke[x]) TODO: new Invokes
-                            setInvokeInDatabase(it.child("/invoke").child("/$x").value.toString()!!)
+                            gameManager?.setInvokeInDatabase(it.child("/invoke").child("/$x").value.toString()!!)
 
                         }
 
@@ -241,7 +214,7 @@ class MessagesActivity: AppCompatActivity()  {
         answersRef.addListenerForSingleValueEvent(object: ValueEventListener{
             override fun onDataChange(p0: DataSnapshot) {
                 p0.children.forEach {
-                    if(invoke.contains(it.key) && it.child("/to").value == toUser?.user_id){
+                    if(gameManager?.invoke!!.contains(it.key) && it.child("/to").value == toUser?.user_id){
                         val actualMessage = it.child("/text")
                         val invokeRef = it.child("/invoke")
                         //clearInvokesFromDatabase()
