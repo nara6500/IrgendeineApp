@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="ENDE"
+        android:textColor="@android:color/white"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:typeface="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:text="Anna und du geht im Wald suchen. Sich durch das Unterholz zu kämpfen ist anstrengend und trotz stundenlanger Suche findet ihr keine Spur von Alex. Abends sitzt ihr beiden verzweifelt in Annas und Alex' Wohnung. Da bekommt Anna einen Anruf aus dem Krankenhaus. Timo hat ihn im Kerker gefunden, wo Alex eingebrochen ist, als er nach uns gesucht hat! Er hat ein verletztes Bein, aber ansonsten geht es ihm schon wieder gut! Anna fährt ihn besuchen und du gehst beruhigt zu dir nach Hause, trotzdem wunderst du dich, woher Timo wusste, wo er nach Alex suchen muss. \nNach ein paar Tagen hat Alex sich immer noch nicht bei dir gemeldet und antwortet auf keine deiner Nachrichten. Du fährst bei ihnen vorbei. Alex möchte dich nicht hereinlassen. In seinen Augen wäre er verdurstet, wenn Timo nicht gewesen wäre, weil du ihm nicht geholfen hast. Er möchte dich nicht mehr sehen. Du fragst dich, ob Timo dich angelogen hat, aber wie tatsächlich alles abgelaufen ist, wirst du wohl nie erfahren. Du hast an diesem Abend nicht nur deine Erinnerungen, sondern auch deinen besten Kumpel verloren."
+                android:textColor="@android:color/white"
+                android:textSize="24sp" />
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -29,6 +29,7 @@
                 android:value=".MainActivity"/>
         </activity>
         <activity android:name=".PhoneAuthentication"></activity>
+        <activity android:name=".End"></activity>
     </application>
 
 </manifest>

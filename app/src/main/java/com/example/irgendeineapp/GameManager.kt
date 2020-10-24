@@ -1,6 +1,9 @@
 package com.example.irgendeineapp
 
+import android.content.Intent
 import android.os.Parcelable
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.startActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -9,16 +12,21 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
 import kotlinx.android.parcel.Parcelize
 
-class GameManager {
+class GameManager{
     lateinit var mAuth: FirebaseAuth
 
     val invoke = mutableListOf<String>()
     var playerName: String = ""
     var userId : String = ""
-    constructor(){
+    var context : MessagesActivity
+
+    constructor(activity: MessagesActivity){
         mAuth = FirebaseAuth.getInstance()
+        context = activity
 
-
+    }
+    companion object{
+        val ENDING = "ENDING"
     }
 
     fun changePlayerNameInText(text: String): String{
@@ -70,6 +78,34 @@ class GameManager {
         }
 
 
+
+    }
+
+    fun checkIfEnd(_singleInvoke: String){
+        if(_singleInvoke == "Ende0") {
+
+            val intent = Intent(context,End::class.java)
+            intent.putExtra(ENDING, _singleInvoke )
+            context.startActivity(intent)
+
+        }
+        if(_singleInvoke == "Ende1") {
+            val intent = Intent(context,End::class.java)
+            intent.putExtra(ENDING, _singleInvoke )
+            context.startActivity(intent)
+
+
+        }
+        if(_singleInvoke == "Ende2") {
+            val intent = Intent(context,End::class.java)
+            intent.putExtra(ENDING, _singleInvoke )
+            context.startActivity(intent)
+        }
+        if(_singleInvoke == "Ende3") {
+            val intent = Intent(context,End::class.java)
+            intent.putExtra(ENDING, _singleInvoke )
+            context.startActivity(intent)
+        }
     }
 
     fun getPlayerName(){
@@ -94,6 +130,7 @@ class GameManager {
         val invokeRef = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/playerSettings")
         val invokeAdd = invokeRef.child("/invoke").push()
         invokeAdd.setValue(_invoke)
+         checkIfEnd(_invoke)
 
         //println("SETTING INVOKES IN FIREBASE NOW TO: " + _invoke)
         //invokeRef.child("/invoke").setValue(_invoke)

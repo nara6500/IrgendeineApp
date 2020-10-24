@@ -38,7 +38,7 @@ class MessagesActivity: AppCompatActivity()  {
         setContentView(R.layout.activity_messages)
         mAuth = FirebaseAuth.getInstance()
 
-        gameManager = GameManager()
+        gameManager = GameManager(this)
         gameManager?.getPlayerName()
         gameManager?.invoke?.clear() //CLEAR LOCAL LIST OF INVOKE, JUST TO BE SURE
         gameManager?.getInvokeFromDatabase() //GET CURRENTLY NEEDED INVOKE FROM FIREBASE USER PROFILE

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="ENDE"
+        android:textColor="@android:color/white"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:typeface="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        app:layout_constraintVertical_bias="0.51">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:text="Anna und du findet dank der Wegbeschreibung sehr einfach die Burgruine. Ihr seid mit Seilen und Lampen ausgestattet und sucht methodisch den stark verwinkelten Kerker ab. Ihr ruft auch immer wieder nach Alex und plötzlich hört ihr eine Antwort. Ihr habt ihn tatsächlich gefunden! Er ist in ein Loch eingebrochen und hat sein Bein verletzt und auch sein Handy zerstört. Ihr ruft den Notarzt und Alex wird gerettet und ins Krankenhaus gebracht. \nDu hast es geschafft! Dank deiner Hilfe konnte Alex gerettet werden. Er und Anna sind dir sehr dankbar. Als du ihn ein paar Tage später im Krankenhaus besuchst, erzählt er dir, warum er im Kerker war: Er ist zurück auf die Party gekommen, um nach dir zu suchen und sich auszusöhnen. Als er dich nirgends finden konnte, hatte er Timo angesprochen. Von dem hat er erfahren, dass du in deinem betrunkenen Zustand die Mutprobe im Kerker mitgemacht hast und bisher nicht mehr aufgetaucht bist. Er war sauer auf Timo, weil er nichts dagegen unternommen hat und es kam zum Streit. Dann ist er sofort los in den Kerker um nach dir zu suchen und ist dabei leider selbst eingebrochen. Dort musste er ausharren, bis er endlich unsere Stimmen gehört hat. Als er dir auch vom restlichen Abend davor erzählt, fällt dir alles wieder ein und du schreibst es sofort auf."
+                android:textColor="@android:color/white"
+                android:textSize="24sp" />
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
