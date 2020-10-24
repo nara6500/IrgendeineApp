@@ -15,6 +15,7 @@ class GameManager {
     val invoke = mutableListOf<String>()
     var playerName: String = ""
     var userId : String = ""
+    var firstMessage = false
     constructor(){
         mAuth = FirebaseAuth.getInstance()
 
@@ -42,7 +43,6 @@ class GameManager {
                     }
                 }
             }
-
         }
 
         //AN09, AN10, AN11, AN17, AN18, AN21, AN29, BE14, JA08, JA09, JA11, JA12, JA13, LI10, LI11, LI12, LI16, LU11, LU12, LU13, MA08, SP60, SP97, SP107, TI17
@@ -68,8 +68,6 @@ class GameManager {
            // Der Spieler bekommt die Nummern von Timo und Luis. Beide Chats müssen hinzugefügt werden, bevor der Spieler ihnen schrieben kann.
             // (Nachricht an Timo: SP47, Nachricht an Luis: SP70)
         }
-
-
     }
 
     fun getPlayerName(){

@@ -32,6 +32,7 @@ class MessagesActivity: AppCompatActivity()  {
     var toUser: User? = null
     var toId: String? =""
     var gameManager: GameManager? = null
+    var isFirstMessage = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -181,7 +182,9 @@ class MessagesActivity: AppCompatActivity()  {
         answersRef.addListenerForSingleValueEvent(object: ValueEventListener{
             override fun onDataChange(p0: DataSnapshot) {
                 GlobalScope.launch(){
-                    delay(2000)
+                    if(isFirstMessage == 1) {
+                        delay(2000)
+                    }
                     p0.children.forEach {
                         if (gameManager?.invoke!!.contains(it.key)) {
                             val fromId = it.child("/from").value.toString()
@@ -235,6 +238,7 @@ class MessagesActivity: AppCompatActivity()  {
                             //  Log.d("keine antwort", it.key)
                         }
                     }
+                    isFirstMessage = 1
                     provideAnswers()
                 }
             }
@@ -290,7 +294,6 @@ class MessagesActivity: AppCompatActivity()  {
         (context.getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(500)
         println("Vibration executed.")
     }
-
 }
 
 class ChatToItem(val text: String, val user:User): Item<ViewHolder>(){
