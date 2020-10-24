@@ -125,26 +125,33 @@ class MessagesActivity: AppCompatActivity()  {
         reference.setValue(chatMessage!!)
             .addOnSuccessListener {
                 //gameManager?.clearInvokesFromDatabase("")
-                for(x in 0 until selectedAnswer?.invoke!!.size ){
-                    gameManager?.clearInvokesFromDatabase(gameManager?.invoke!![x])
-                }
-                gameManager?.invoke?.clear()
+
+              //  gameManager?.invoke?.clear()
 
                 // invoke.add(selectedAnswer?.invoke.toString())
 
                 //setInvokeInDatabase(selectedAnswer?.invoke.toString())
                 //gameManager?.clearInvokesFromDatabase("")
+                println("selectedAnswerNode"+selectedAnswer?.node)
+                gameManager?.clearInvokesFromDatabase(selectedAnswer?.node!!)
+                gameManager?.invoke?.clear()
+
+
 
                 for(x in 0 until selectedAnswer?.invoke!!.size ){
                     gameManager?.invoke?.add(selectedAnswer?.invoke!![x])
                     //println("selectedAnswerinvoke" + selectedAnswer?.invoke!![x])
                 }
 
+
+
                 //WRITE NEW ENTRIES TO INVOKE
                 for( x in 0 until gameManager?.invoke?.size!!) {
                     //setInvokeInDatabase(it.child("/invoke").value.toString())
                     gameManager?.setInvokeInDatabase(gameManager?.invoke!![x])
                 }
+
+
 
                 answerAdapter.clear()
                 selectedAnswer = null
@@ -205,6 +212,7 @@ class MessagesActivity: AppCompatActivity()  {
                             }
 
 
+
                             val actualMessage = gameManager?.changePlayerNameInText(it.child("/text").value.toString())
                             val chatMessage = ChatMessage(fromId, it.key.toString(), actualMessage!!, toId)
 
@@ -245,6 +253,7 @@ class MessagesActivity: AppCompatActivity()  {
             override fun onDataChange(p0: DataSnapshot) {
                 p0.children.forEach {
                     if(gameManager?.invoke!!.contains(it.key) && it.child("/to").value == toUser?.user_id){
+                        val node = it.key
                         val actualMessage = it.child("/text")
                         val invokeRef = it.child("/invoke")
                         //clearInvokesFromDatabase()
@@ -260,7 +269,7 @@ class MessagesActivity: AppCompatActivity()  {
                                 _invoke.add(invokeRef.child("/$x").value.toString())
                                 //println("Was ist da drin?"+ it.child("/invoke").child("/$x").value.toString())
                             }
-                            answerAdapter.add(UserAnswer(gameManager?.changePlayerNameInText(it.value.toString())!!, _invoke))
+                            answerAdapter.add(UserAnswer(gameManager?.changePlayerNameInText(it.value.toString())!!, _invoke, node!!))
 
                         }
                     }}
@@ -302,7 +311,7 @@ class ChatFromItem(val text: String): Item<ViewHolder>(){
     }
 }
 
-class UserAnswer(val text: String, val invoke: MutableList<String>): Item<ViewHolder>(){
+class UserAnswer(val text: String, val invoke: MutableList<String>, val node: String): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.answer.text = text
     }
