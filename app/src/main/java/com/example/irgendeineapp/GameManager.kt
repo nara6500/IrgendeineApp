@@ -15,7 +15,6 @@ class GameManager {
     val invoke = mutableListOf<String>()
     var playerName: String = ""
     var userId : String = ""
-    var firstMessage = false
     constructor(){
         mAuth = FirebaseAuth.getInstance()
 
