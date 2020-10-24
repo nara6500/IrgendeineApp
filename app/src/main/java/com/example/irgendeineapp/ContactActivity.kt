@@ -47,10 +47,6 @@ class  ContactActivity : AppCompatActivity() {
         chat_List.adapter = adapter*/
     }
 
-
-
-
-
     companion object{
         val USER_KEY = "USER_KEY"
     }
@@ -58,6 +54,7 @@ class  ContactActivity : AppCompatActivity() {
 
     val adapter = GroupAdapter<ViewHolder>()
     private fun fetchUsers(){
+        println("IF THIS WORKS, ALEX'S CHAT SHOULD BE SET TO: " + GameManager.chatIsVisible[1])
         val ref = FirebaseDatabase.getInstance().getReference("/user")
 
         Log.d("Ref", ref.toString());
@@ -71,7 +68,7 @@ class  ContactActivity : AppCompatActivity() {
 
                     Log.d("NewMessage", it.toString())
                     val user = it.getValue(User::class.java)
-                    if (user != null && user.user_id !="0") {
+                    if (user != null && user.user_id !="0" && GameManager.chatIsVisible[user.user_id.toInt()] != 0) {
                         adapter.add(UserItem(user))
                         Log.d("allright", user.toString())
                     } else
@@ -99,9 +96,6 @@ class  ContactActivity : AppCompatActivity() {
         })
     }
 }
-
-
-
 
 class UserItem(val user:User): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {

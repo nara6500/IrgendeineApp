@@ -27,6 +27,7 @@ class GameManager {
     }
     companion object{
         val ENDING = "ENDING"
+        var chatIsVisible = mutableListOf(0,0,1,0,0,0,0,0,0)
     }
 
     fun changePlayerNameInText(text: String): String{
@@ -107,6 +108,22 @@ class GameManager {
         }
     }
 
+    fun checkForVisibility(_singleInvoke:String){
+        if(_singleInvoke == "AN05_wait") {
+            chatIsVisible[1] = 1
+        }
+        if(_singleInvoke == "SP99") {
+            chatIsVisible[8] = 1
+        }
+        if(_singleInvoke == "SP41") {
+            chatIsVisible[4] = 1
+            chatIsVisible[7] = 1
+        }
+        if(_singleInvoke == "AN07") {
+            chatIsVisible[5] = 1
+        }
+    }
+
     fun getPlayerName(){
         val player = mAuth.currentUser?.uid
         val invokeRef =  FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/playerSettings/userName")
@@ -130,6 +147,7 @@ class GameManager {
         val invokeAdd = invokeRef.child("/invoke").push()
         invokeAdd.setValue(_invoke)
          checkIfEnd(_invoke)
+         checkForVisibility(_invoke)
 
         //println("SETTING INVOKES IN FIREBASE NOW TO: " + _invoke)
         //invokeRef.child("/invoke").setValue(_invoke)
