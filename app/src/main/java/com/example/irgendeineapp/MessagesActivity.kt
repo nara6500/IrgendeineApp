@@ -87,9 +87,9 @@ class MessagesActivity: AppCompatActivity()  {
 
                 if(chatMessage != null){
                     if(chatMessage.from == "0") {
-                        adapter.add(ChatFromItem(chatMessage.text))
-                    }else {
                         adapter.add(ChatToItem(chatMessage.text, toUser!!))
+                    }else {
+                        adapter.add(ChatFromItem(chatMessage.text))
                     }
                 }
                 recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
@@ -278,10 +278,13 @@ class MessagesActivity: AppCompatActivity()  {
                         }
                     }}
 
+                recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
+
                 answerAdapter.setOnItemClickListener { item, view ->
                     val answerItem = item as UserAnswer
                     selectedAnswer = answerItem
                     view.setBackgroundColor(Color.parseColor("#404040"))
+
                     //println("klick"+ selectedAnswer?.invoke.toString())
                 }
             }
