@@ -173,61 +173,61 @@ class MessagesActivity: AppCompatActivity()  {
         val answersRef = FirebaseDatabase.getInstance().getReference("/user-messages/0/$toId")
         answersRef.addListenerForSingleValueEvent(object: ValueEventListener{
             override fun onDataChange(p0: DataSnapshot) {
-                p0.children.forEach {
-                    if(gameManager?.invoke!!.contains(it.key)){
-                        val fromId = it.child("/from").value.toString()
-                        val toId = it.child("/to").value.toString()
-                        val reference = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/messages/$toId/$fromId").push()
+                GlobalScope.launch(){
+                    delay(2000)
+                    p0.children.forEach {
+                        if (gameManager?.invoke!!.contains(it.key)) {
+                            val fromId = it.child("/from").value.toString()
+                            val toId = it.child("/to").value.toString()
+                            val reference = FirebaseDatabase.getInstance()
+                                .getReference("/ownPlaySettings/${player}/messages/$toId/$fromId")
+                                .push()
 
-                        //DELETE ALL INVOKES FROM CURRENT INVOKE ENTRY
-                        gameManager?.clearInvokesFromDatabase(it.key!!)
-                        gameManager?.invoke?.clear()
-                        //println("CLEARED CONTENTS FROM INVOKE LIST.")
-                        //WRITE NEW ENTRIES TO INVOKE
+                            //DELETE ALL INVOKES FROM CURRENT INVOKE ENTRY
+                            gameManager?.clearInvokesFromDatabase(it.key!!)
+                            gameManager?.invoke?.clear()
+                            //println("CLEARED CONTENTS FROM INVOKE LIST.")
+                            //WRITE NEW ENTRIES TO INVOKE
 
-                        for(x in 0 until it.child("/invoke").childrenCount) {
-                            gameManager?.invoke?.add(it.child("/invoke").child("/$x").value.toString()!!)
-                        }
-                        //println("INVOKE IS NOW SET TO " + invoke + " AFTER LOOPING.")
-                        for( x in 0 until gameManager?.invoke!!.size) {
-                            //setInvokeInDatabase(it.child("/invoke").value.toString())
-                            //setInvokeInDatabase(invoke[x]) TODO: new Invokes
-                            gameManager?.setInvokeInDatabase(it.child("/invoke").child("/$x").value.toString()!!)
-
-                        }
-
-
-                        val actualMessage = gameManager?.changePlayerNameInText(it.child("/text").value.toString())
-                        val chatMessage = ChatMessage(fromId, it.key.toString(), actualMessage!!,toId)
-
-                        GlobalScope.launch(){
-                            delay(2000)
-                            reference.setValue(chatMessage)
-                            .addOnSuccessListener {
-                                // edittext_chat_log.text.clear()
-                                recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
-
-                                val latestMessageRef = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/latest-messages/$toId/$fromId")
-                                latestMessageRef.setValue(chatMessage)
-                                shake(this@MessagesActivity)
-
-                                provideAnswers()
+                            for (x in 0 until it.child("/invoke").childrenCount) {
+                                gameManager?.invoke?.add(
+                                    it.child("/invoke").child("/$x").value.toString()!!
+                                )
                             }
+                            //println("INVOKE IS NOW SET TO " + invoke + " AFTER LOOPING.")
+                            for (x in 0 until gameManager?.invoke!!.size) {
+                                //setInvokeInDatabase(it.child("/invoke").value.toString())
+                                //setInvokeInDatabase(invoke[x]) TODO: new Invokes
+                                gameManager?.setInvokeInDatabase(
+                                    it.child("/invoke").child("/$x").value.toString()!!
+                                )
+
+                            }
+
+
+                            val actualMessage = gameManager?.changePlayerNameInText(it.child("/text").value.toString())
+                            val chatMessage = ChatMessage(fromId, it.key.toString(), actualMessage!!, toId)
+
+
+                            reference.setValue(chatMessage)
+                                .addOnSuccessListener {
+                                    // edittext_chat_log.text.clear()
+                                    recyclerview_chat_log.scrollToPosition(adapter.itemCount - 1)
+
+                                    val latestMessageRef = FirebaseDatabase.getInstance()
+                                        .getReference("/ownPlaySettings/${player}/latest-messages/$toId/$fromId")
+                                    latestMessageRef.setValue(chatMessage)
+                                    shake(this@MessagesActivity)
+
+
+                                }
+
+
+                        } else {
+                            //  Log.d("keine antwort", it.key)
                         }
-
-                        /*reference.setValue(chatMessage)
-                            .addOnSuccessListener {
-                                // edittext_chat_log.text.clear()
-                                recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
-
-                                val latestMessageRef = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/latest-messages/$toId/$fromId")
-                                latestMessageRef.setValue(chatMessage)
-                            }*/
-
-                    }else{
-                        //  Log.d("keine antwort", it.key)
                     }
-                    //provideAnswers()
+                    provideAnswers()
                 }
             }
             override fun onCancelled(error: DatabaseError) {
