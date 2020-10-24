@@ -1,7 +1,9 @@
 package com.example.irgendeineapp
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Vibrator
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -207,6 +209,7 @@ class MessagesActivity: AppCompatActivity()  {
 
                                 val latestMessageRef = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/latest-messages/$toId/$fromId")
                                 latestMessageRef.setValue(chatMessage)
+                                shake(this@MessagesActivity)
 
                                 provideAnswers()
                             }
@@ -273,6 +276,12 @@ class MessagesActivity: AppCompatActivity()  {
             }
         })
     }
+
+    private fun shake(context: Context){
+        (context.getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(500)
+        println("Vibration executed.")
+    }
+
 }
 
 class ChatToItem(val text: String, val user:User): Item<ViewHolder>(){
