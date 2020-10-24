@@ -12,7 +12,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
 import kotlinx.android.parcel.Parcelize
 
-class GameManager{
+class GameManager {
     lateinit var mAuth: FirebaseAuth
 
     val invoke = mutableListOf<String>()
@@ -50,7 +50,6 @@ class GameManager{
                     }
                 }
             }
-
         }
 
         //AN09, AN10, AN11, AN17, AN18, AN21, AN29, BE14, JA08, JA09, JA11, JA12, JA13, LI10, LI11, LI12, LI16, LU11, LU12, LU13, MA08, SP60, SP97, SP107, TI17
