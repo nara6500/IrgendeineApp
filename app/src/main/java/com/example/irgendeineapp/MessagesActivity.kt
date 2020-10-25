@@ -63,6 +63,9 @@ class MessagesActivity: AppCompatActivity()  {
 
         }
 
+        if(toId == "1"){
+            provideChat()
+        }
         provideUserAnswers()
 
         recyclerview_answers.adapter = answerAdapter
@@ -173,14 +176,7 @@ class MessagesActivity: AppCompatActivity()  {
 
     }
 
-
-
-
-
-
-
     private fun provideUserAnswers(){
-        //println("ENTERING provideUserAnswers() NOW.")
         val player = mAuth.currentUser?.uid
         val answersRef = FirebaseDatabase.getInstance().getReference("/user-messages/0/$toId")
         answersRef.addListenerForSingleValueEvent(object: ValueEventListener{
@@ -200,15 +196,14 @@ class MessagesActivity: AppCompatActivity()  {
                             //DELETE ALL INVOKES FROM CURRENT INVOKE ENTRY
                             gameManager?.clearInvokesFromDatabase(it.key!!)
                             gameManager?.invoke?.clear()
-                            //println("CLEARED CONTENTS FROM INVOKE LIST.")
-                            //WRITE NEW ENTRIES TO INVOKE
 
+                            //WRITE NEW ENTRIES TO INVOKE
                             for (x in 0 until it.child("/invoke").childrenCount) {
                                 gameManager?.invoke?.add(
                                     it.child("/invoke").child("/$x").value.toString()!!
                                 )
                             }
-                            //println("INVOKE IS NOW SET TO " + invoke + " AFTER LOOPING.")
+
                             for (x in 0 until gameManager?.invoke!!.size) {
                                 //setInvokeInDatabase(it.child("/invoke").value.toString())
                                 //setInvokeInDatabase(invoke[x]) TODO: new Invokes
@@ -218,11 +213,8 @@ class MessagesActivity: AppCompatActivity()  {
 
                             }
 
-
-
                             val actualMessage = gameManager?.changePlayerNameInText(it.child("/text").value.toString())
                             val chatMessage = ChatMessage(fromId, it.key.toString(), actualMessage!!, toId)
-
 
                             reference.setValue(chatMessage)
                                 .addOnSuccessListener {
@@ -233,17 +225,13 @@ class MessagesActivity: AppCompatActivity()  {
                                         .getReference("/ownPlaySettings/${player}/latest-messages/$toId/$fromId")
                                     latestMessageRef.setValue(chatMessage)
                                     shake(this@MessagesActivity)
-
-
                                 }
-
-
                         } else {
                             //  Log.d("keine antwort", it.key)
                         }
                     }
                     isFirstMessage = 1
-                    provideAnswers()
+                        provideAnswers()
                 }
             }
             override fun onCancelled(error: DatabaseError) {
@@ -278,7 +266,6 @@ class MessagesActivity: AppCompatActivity()  {
                                 //println("Was ist da drin?"+ it.child("/invoke").child("/$x").value.toString())
                             }
                             answerAdapter.add(UserAnswer(gameManager?.changePlayerNameInText(it.value.toString())!!, _invoke, node!!))
-
                         }
                     }}
 
@@ -287,7 +274,7 @@ class MessagesActivity: AppCompatActivity()  {
                 answerAdapter.setOnItemClickListener { item, view ->
                     val answerItem = item as UserAnswer
                     selectedAnswer = answerItem
-                    view.setBackgroundColor(Color.parseColor("#404040"))
+                    //view.setBackgroundColor(Color.parseColor("#404040"))
 
                     //println("klick"+ selectedAnswer?.invoke.toString())
                 }
@@ -300,6 +287,28 @@ class MessagesActivity: AppCompatActivity()  {
     private fun shake(context: Context){
         (context.getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(500)
         println("Vibration executed.")
+    }
+
+    private fun provideChat(){
+        val chatRef = FirebaseDatabase.getInstance().getReference("/user-messages/0/1")
+        chatRef.addListenerForSingleValueEvent(object: ValueEventListener{
+            override fun onDataChange(p0: DataSnapshot) {
+                p0.children.forEach {
+                    val chatMessage = ChatMessage(it.child("/from").value.toString(),it.child("/invoke").value.toString(),it.child("/text").value.toString(),it.child("/to").value.toString())
+
+                    if(chatMessage != null){
+                        if(chatMessage.from == "0") {
+                            adapter.add(ChatToItem(chatMessage.text, toUser!!))
+                        }else {
+                            adapter.add(ChatFromItem(chatMessage.text))
+                        }
+                    }
+                    recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
+                }
+            }
+            override fun onCancelled(p0: DatabaseError) {
+            }
+        })
     }
 }
 
