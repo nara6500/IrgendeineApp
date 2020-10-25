@@ -53,8 +53,7 @@ class GameManager {
             }
         }
 
-        //AN09, AN10, AN11, AN17, AN18, AN21, AN29, BE14, JA08, JA09, JA11, JA12, JA13, LI10, LI11, LI12, LI16, LU11, LU12, LU13, MA08, SP60, SP97, SP107, TI17
-        // laufen ins leere, bis neue informationen da sind  (muss das abgefangen werden?)
+
 
         if(_singleInvoke == "BE04"){
             // Der Spieler muss herausfinden, was Alex an dem Abend anhatte, bevor die Geschichte weiter geht.
@@ -63,10 +62,6 @@ class GameManager {
         }
 
 
-        if(_singleInvoke == "LU"){
-            // Luis gibt dem Spieler eine neue Nummer (Marlene). Ein neuer Chat wird hinzugefügt und der Spieler kann Marlene schreiben.
-            // Da könnte als Invoke auch SP99 stehen, das ist die Nachricht, die der Spieler Marlene schicken kann.
-        }
 
 
 
@@ -104,9 +99,6 @@ class GameManager {
         if(_singleInvoke == "AN05_wait") {
             chatIsVisible[1] = 1
         }
-        if(_singleInvoke == "SP99") {
-            chatIsVisible[8] = 1
-        }
         if(_singleInvoke == "Timo"){
             chatIsVisible[3] = 1
 
@@ -115,6 +107,25 @@ class GameManager {
                 if(invoke[x].contains(_singleInvoke)){
                     clearInvokesFromDatabase(invoke[x])
                     setInvokeInDatabase("SP47")
+                }
+            }
+
+
+        }
+        if(_singleInvoke == "BE01") {
+            chatIsVisible[4] = 1
+        }
+        if(_singleInvoke == "AN07") {
+            chatIsVisible[5] = 1
+        }
+        if(_singleInvoke == "Lina"){
+            chatIsVisible[6] = 1
+
+
+            for(x in 0 until invoke.size){
+                if(invoke[x].contains(_singleInvoke)){
+                    clearInvokesFromDatabase(invoke[x])
+                    setInvokeInDatabase("SP82")
                 }
             }
 
@@ -131,10 +142,14 @@ class GameManager {
             }
 
         }
-
-        if(_singleInvoke == "AN07") {
-            chatIsVisible[5] = 1
+        if(_singleInvoke == "SP99") {
+            chatIsVisible[8] = 1
         }
+
+
+
+
+
     }
 
     fun getPlayerName(){
