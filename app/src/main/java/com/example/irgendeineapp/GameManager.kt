@@ -116,7 +116,7 @@ class GameManager {
             chatIsVisible[8] = 1
         }
         if(_singleInvoke == "SP41") {
-            chatIsVisible[4] = 1
+            chatIsVisible[3] = 1
             chatIsVisible[7] = 1
         }
         if(_singleInvoke == "AN07") {
