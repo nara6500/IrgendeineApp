@@ -19,16 +19,19 @@ class GameManager {
     var playerName: String = ""
     var userId : String = ""
     var context : MessagesActivity
+    var contactVisibility: ContactVisibility? = null
 
     constructor(activity: MessagesActivity){
         mAuth = FirebaseAuth.getInstance()
         context = activity
-
+        contactVisibility = ContactVisibility()
+        contactVisibility!!.getChatIsVisibleFromFirebase()
     }
     companion object{
         val ENDING = "ENDING"
-        var chatIsVisible = mutableListOf(0,0,1,0,0,0,0,0,0)
+
     }
+
 
     fun changePlayerNameInText(text: String): String{
 
@@ -97,10 +100,11 @@ class GameManager {
 
     fun checkForVisibility(_singleInvoke:String){
         if(_singleInvoke == "AN05_wait") {
-            chatIsVisible[1] = 1
+            contactVisibility!!.chatIsVisible[1] = 1
+            contactVisibility!!.setChatIsVisibleToFirebase()
         }
         if(_singleInvoke == "Timo"){
-            chatIsVisible[3] = 1
+            contactVisibility!!.chatIsVisible[3] = 1
 
 
             for(x in 0 until invoke.size){
@@ -109,17 +113,19 @@ class GameManager {
                     setInvokeInDatabase("SP47")
                 }
             }
-
+            contactVisibility!!.setChatIsVisibleToFirebase()
 
         }
         if(_singleInvoke == "BE01") {
-            chatIsVisible[4] = 1
+            contactVisibility!!.chatIsVisible[4] = 1
+            contactVisibility!!.setChatIsVisibleToFirebase()
         }
         if(_singleInvoke == "AN07") {
-            chatIsVisible[5] = 1
+            contactVisibility!!.chatIsVisible[5] = 1
+            contactVisibility!!.setChatIsVisibleToFirebase()
         }
         if(_singleInvoke == "Lina"){
-            chatIsVisible[6] = 1
+            contactVisibility!!.chatIsVisible[6] = 1
 
 
             for(x in 0 until invoke.size){
@@ -128,11 +134,11 @@ class GameManager {
                     setInvokeInDatabase("SP82")
                 }
             }
-
+            contactVisibility!!.setChatIsVisibleToFirebase()
 
         }
         if(_singleInvoke == "Luis"){
-            chatIsVisible[7] = 1
+            contactVisibility!!.chatIsVisible[7] = 1
 
             for(x in 0 until invoke.size){
                 if(invoke[x].contains(_singleInvoke)){
@@ -140,17 +146,17 @@ class GameManager {
                     setInvokeInDatabase("SP70")
                 }
             }
-
+            contactVisibility!!.setChatIsVisibleToFirebase()
         }
         if(_singleInvoke == "SP99") {
-            chatIsVisible[8] = 1
+            contactVisibility!!.chatIsVisible[8] = 1
+            contactVisibility!!.setChatIsVisibleToFirebase()
+
         }
 
-
-
-
-
     }
+
+
 
     fun getPlayerName(){
         val player = mAuth.currentUser?.uid
@@ -247,4 +253,35 @@ class GameManager {
         })
     }
 
+}
+
+class ContactVisibility{
+    lateinit var mAuth: FirebaseAuth
+
+    constructor(){
+        mAuth = FirebaseAuth.getInstance()
+
+    }
+
+    var chatIsVisible = mutableListOf(0,0,1,0,0,0,0,0,0)
+
+    fun setChatIsVisibleToFirebase(){
+        val player = mAuth.currentUser?.uid
+        val ref =  FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/playerSettings/chatIsVisible")
+        ref.setValue(chatIsVisible)
+    }
+
+    fun getChatIsVisibleFromFirebase(){
+        val player = mAuth.currentUser?.uid
+        val ref =  FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/playerSettings/chatIsVisible")
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(p0: DataSnapshot) {
+                chatIsVisible = p0.getValue<MutableList<Int>>()!!
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+            }
+        })
+    }
 }

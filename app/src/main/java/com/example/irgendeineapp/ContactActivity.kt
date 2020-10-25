@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.user_row_contact.view.*
 
 
 class  ContactActivity : AppCompatActivity() {
-
+    var contactVisibility: ContactVisibility? = null
     @SuppressLint("ResourceAsColor")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +38,8 @@ class  ContactActivity : AppCompatActivity() {
         }
 
         contacts_button.setBackgroundColor(R.color.colorPrimaryDark)
-
+        contactVisibility = ContactVisibility()
+        contactVisibility!!.getChatIsVisibleFromFirebase()
 
         fetchUsers()
 /*
@@ -67,7 +68,7 @@ class  ContactActivity : AppCompatActivity() {
 
                     Log.d("NewMessage", it.toString())
                     val user = it.getValue(User::class.java)
-                    if (user != null && user.user_id !="0" && GameManager.chatIsVisible[user.user_id.toInt()] != 0) {
+                    if (user != null && user.user_id !="0" && contactVisibility!!.chatIsVisible[user.user_id.toInt()] != 0) {
                         adapter.add(UserItem(user))
                         Log.d("allright", user.toString())
                     } else

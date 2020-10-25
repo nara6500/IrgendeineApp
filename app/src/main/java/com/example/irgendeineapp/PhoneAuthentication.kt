@@ -25,13 +25,15 @@ class PhoneAuthentication : AppCompatActivity() {
 
 
     lateinit var mAuth: FirebaseAuth
-
+    var contactVisibility: ContactVisibility? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_phone_authentication)
         mAuth = FirebaseAuth.getInstance()
+        contactVisibility = ContactVisibility()
+
         veriBtn.setOnClickListener {
                 view: View? -> progress.visibility = View.VISIBLE
             verify ()
@@ -55,6 +57,7 @@ class PhoneAuthentication : AppCompatActivity() {
 
                     ref.child("/invoke").setValue(invoke)
                    ref.child("/userName").setValue(userName)
+                    contactVisibility!!.setChatIsVisibleToFirebase()
                     startActivity(Intent(this, MainActivity::class.java))
                 } else {
                     // If sign in fails, display a message to the user.
