@@ -62,20 +62,12 @@ class GameManager {
             // wenn er die Infos hat und das Gespräch geht erst weiter, wenn der Spieler mit den anderen Charakteren geredet hat und zumindest eine der Infos rausgefunden hat.
         }
 
-        if(_singleInvoke == "BE13"){
-           // Der Spieler hat erstmal alles von Benji erfahren und die Geschichte geht in einem anderen Chat weiter.
-            // Benji schreibt nur noch eine Nachricht um nett zu sein (Wenn das Probleme macht, kann man die theoretisch auch weglassen,
-            // die ist nur schmückend und nicht relevant für die Geschichte).
 
-        }
         if(_singleInvoke == "LU"){
             // Luis gibt dem Spieler eine neue Nummer (Marlene). Ein neuer Chat wird hinzugefügt und der Spieler kann Marlene schreiben.
             // Da könnte als Invoke auch SP99 stehen, das ist die Nachricht, die der Spieler Marlene schicken kann.
         }
-        if(_singleInvoke == "SP41"){
-           // Der Spieler bekommt die Nummern von Timo und Luis. Beide Chats müssen hinzugefügt werden, bevor der Spieler ihnen schrieben kann.
-            // (Nachricht an Timo: SP47, Nachricht an Luis: SP70)
-        }
+
 
 
 
@@ -115,10 +107,31 @@ class GameManager {
         if(_singleInvoke == "SP99") {
             chatIsVisible[8] = 1
         }
-        if(_singleInvoke == "SP41") {
+        if(_singleInvoke == "Timo"){
             chatIsVisible[3] = 1
-            chatIsVisible[7] = 1
+
+
+            for(x in 0 until invoke.size){
+                if(invoke[x].contains(_singleInvoke)){
+                    clearInvokesFromDatabase(invoke[x])
+                    setInvokeInDatabase("SP47")
+                }
+            }
+
+
         }
+        if(_singleInvoke == "Luis"){
+            chatIsVisible[7] = 1
+
+            for(x in 0 until invoke.size){
+                if(invoke[x].contains(_singleInvoke)){
+                    clearInvokesFromDatabase(invoke[x])
+                    setInvokeInDatabase("SP70")
+                }
+            }
+
+        }
+
         if(_singleInvoke == "AN07") {
             chatIsVisible[5] = 1
         }
