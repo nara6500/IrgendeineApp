@@ -138,6 +138,7 @@ class MessagesActivity: AppCompatActivity()  {
                 //gameManager?.clearInvokesFromDatabase("")
                 println("selectedAnswerNode"+selectedAnswer?.node)
                 gameManager?.clearInvokesFromDatabase(selectedAnswer?.node!!)
+                gameManager?.handleDeleteNodes(selectedAnswer?.node!!)
                 gameManager?.invoke?.clear()
 
 

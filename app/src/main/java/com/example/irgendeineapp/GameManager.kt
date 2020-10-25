@@ -174,6 +174,30 @@ class GameManager {
         })
     }
 
+    fun handleDeleteNodes(_selectedInvoke:String){
+        // referenz des gesetzten invokes
+        val player = mAuth.currentUser?.uid
+        val deleteRef = FirebaseDatabase.getInstance().getReference("/user-messages/0/0")
+        deleteRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(p0: DataSnapshot) {
+                p0.children.forEach {
+                    if (it.key == _selectedInvoke){
+                        val deleteNodeList = it.child("/deleteNode")
+                        for(x in 0 until deleteNodeList?.childrenCount){
+                            val invokeValue = deleteNodeList.child("/$x").value.toString()
+                            clearInvokesFromDatabase(invokeValue)
+                        }
+
+                    }
+
+                }
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+            }
+        })
+    }
+
     fun clearInvokesFromDatabase(invokeToDelete:String) {
         val player = mAuth.currentUser?.uid
         /*val invokeRef = FirebaseDatabase.getInstance().getReference("/ownPlaySettings/${player}/playerSettings/invoke")
