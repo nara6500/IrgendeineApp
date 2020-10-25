@@ -1,6 +1,7 @@
 package com.example.irgendeineapp
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Vibrator
@@ -69,6 +70,8 @@ class MessagesActivity: AppCompatActivity()  {
     }
 
     override fun onSupportNavigateUp(): Boolean {
+        val intent = Intent(this, ContactActivity::class.java)
+        startActivity(intent)
         onBackPressed()
         return true
     }

@@ -54,7 +54,6 @@ class  ContactActivity : AppCompatActivity() {
 
     val adapter = GroupAdapter<ViewHolder>()
     private fun fetchUsers(){
-        println("IF THIS WORKS, ALEX'S CHAT SHOULD BE SET TO: " + GameManager.chatIsVisible[1])
         val ref = FirebaseDatabase.getInstance().getReference("/user")
 
         Log.d("Ref", ref.toString());
