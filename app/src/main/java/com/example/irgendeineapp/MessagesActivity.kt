@@ -183,7 +183,7 @@ class MessagesActivity: AppCompatActivity()  {
             override fun onDataChange(p0: DataSnapshot) {
                 GlobalScope.launch(){
                     if(isFirstMessage == 1) {
-                        delay(2000)
+                        delay(3500)
                     }
                     p0.children.forEach {
                         if (gameManager?.invoke!!.contains(it.key)) {
